@@ -1,15 +1,15 @@
 import "./App.css";
 import { Route, Routes } from "react-router";
 import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
 import Home from "./components/Home";
+import ChatWindow from "./components/ChatWindow";
 function App() {
   return (
     <div>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<Sidebar />} />
+        <Route path="/chat" element={<ChatWindow />} />
       </Routes>
     </div>
   );
