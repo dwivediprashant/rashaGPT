@@ -1,7 +1,8 @@
+import "./App.css";
 function App() {
   return (
     <>
-      <div> Hello world!</div>
+      <div className="text-[50px]"> Hello world!</div>
     </>
   );
 }
