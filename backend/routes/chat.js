@@ -25,7 +25,7 @@ router.post("/chats", async (req, res) => {
 router.get("/chats", async (req, res) => {
   try {
     const allChats = await Chat.find({}).sort({ updatedAt: -1 });
-    res.send(allChats);
+    res.status(200).json({ allChats });
   } catch (error) {
     res.status(500).json({ error: "Chats not fetched from DB!" });
   }
@@ -35,6 +35,7 @@ router.get("/chats", async (req, res) => {
 
 router.get("/chats/:chatId", async (req, res) => {
   const { chatId } = req.params;
+  console.log(chatId);
   // console.log(chatId);
   try {
     //find all messages that belongs to this chat
@@ -46,6 +47,7 @@ router.get("/chats/:chatId", async (req, res) => {
 
     res.json({ messages: allMessageOfChat });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Required chat not fetched from DB!" });
   }
 });
