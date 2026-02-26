@@ -11,7 +11,6 @@ export default function ChatInput() {
         <button
           type="submit"
           className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white transition hover:bg-red-500"
-          aria-label="Send message"
         >
           <i className="fa-solid fa-arrow-up" />
         </button>

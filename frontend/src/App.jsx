@@ -9,7 +9,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<ChatWindow />} />
+        <Route path="/chat/:chatId" element={<ChatWindow />} />
       </Routes>
     </div>
   );
