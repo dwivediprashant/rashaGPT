@@ -1,3 +1,13 @@
 .sidebar-chats {
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.all-chat-list {
+  flex: 1;
+  overflow-y: auto;
+}
+button {
+  cursor: pointer;
 }
