@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 import axios from "axios";
 export default function ChatInput() {
   const { chatId } = useParams();
-  const { prompt, setPrompt, reply, setReply } = useContext(MyContext);
+  const { prompt, setPrompt, setReply } = useContext(MyContext);
 
   const getReply = async (e) => {
     e.preventDefault();
@@ -17,7 +17,8 @@ export default function ChatInput() {
       },
     });
     console.log(res.data.response);
-    setReply(res.data.response);
+    setReply(res.data);
+    setPrompt("");
   };
   return (
     <div className="sticky bottom-8  bg-neutral-900/80 p-4 backdrop-blur rounded-2xl">
