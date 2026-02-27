@@ -8,11 +8,12 @@ export default function Navbar() {
   return (
     <>
       <div className="navbar flex place-content-between p-4">
-        <div className="logo" onClick={handleClick}>
-          <i className="fa-brands fa-openai text-[30px] text-white"></i>
+        <div className="logo ml-8" onClick={handleClick}>
+          <span className="text-white">rasha-</span>
+          <span className="text-red-600 font-semibold">GPT</span>
         </div>
-        <div className="user-profile">
-          <i className="fa-solid fa-user text-[30px] text-white"></i>
+        <div className="login ">
+          <i class="fa-solid fa-arrow-right-from-bracket text-white text-xl mr-8"></i>
         </div>
       </div>
     </>

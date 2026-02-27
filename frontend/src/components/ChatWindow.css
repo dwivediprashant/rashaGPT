@@ -1,8 +1,7 @@
 /* .chat-window {
   overflow-y: scroll;
 } */
-.user-msg,
-.assistant-msg {
+.user-msg {
   display: inline-flex;
   flex-wrap: wrap;
   gap: 0.25rem;
@@ -18,7 +17,7 @@
   justify-content: flex-end;
 }
 
-.assistant-msg {
+/* .assistant-msg {
   margin-right: auto;
   justify-content: flex-start;
-}
+} */

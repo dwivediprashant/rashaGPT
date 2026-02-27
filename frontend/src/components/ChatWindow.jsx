@@ -5,9 +5,11 @@ import "./ChatWindow.css";
 import Sidebar from "./Sidebar";
 import { useParams } from "react-router";
 import axios from "axios";
-import Loader from "./Loader";
-import Loader2 from "./Loader2";
+import Loader5 from "./Loaders/Loader5";
 import WelcomeMsg from "./WelcomeMsg";
+import Markdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
 export default function ChatWindow() {
   const { chatId } = useParams();
   console.log(chatId);
@@ -40,7 +42,7 @@ export default function ChatWindow() {
         <div className="flex-1 overflow-y-auto p-8">
           {isLoading || allMessages.length === 0 ? (
             <div className="flex flex-col h-full items-center justify-center">
-              <Loader2 />
+              <Loader5 />
               <WelcomeMsg />
             </div>
           ) : (
@@ -51,9 +53,9 @@ export default function ChatWindow() {
                     {msg.content}
                   </p>
                 ) : (
-                  <p key={idx} className="assistant-msg p-4 bg-blue-600">
+                  <Markdown rehypePlugins={[rehypeHighlight]} key={idx}>
                     {msg.content}
-                  </p>
+                  </Markdown>
                 ),
               )}
             </div>

@@ -31,7 +31,7 @@ export default function Sidebar() {
       <div className="sidebar-chats p-4 max-w-[250px] shadow-xl/30 border-r border-solid] text-white">
         <button
           onClick={handleClick}
-          className="inline-flex items-center gap-2 px-8 py-2 m-4 bg-red-800 font-semibold text-white rounded"
+          className="flex whitespace-nowrap items-center gap-2 px-8 py-2 m-4 bg-red-800 font-semibold text-white rounded"
         >
           New Chat <i className="fa-solid fa-pen-to-square" />
         </button>

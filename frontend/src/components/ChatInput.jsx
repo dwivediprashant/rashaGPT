@@ -6,20 +6,21 @@ import axios from "axios";
 export default function ChatInput() {
   const { chatId } = useParams();
   const { prompt, setPrompt, setReply } = useContext(MyContext);
-
   const getReply = async (e) => {
     e.preventDefault();
-    const res = await axios({
-      method: "POST",
-      url: `http://localhost:8080/api/chats/${chatId}`,
-      data: {
-        message: prompt,
-      },
-    });
-
-    console.log(res.data.response);
-    setReply(res.data);
-    setPrompt("");
+    try {
+      const res = await axios({
+        method: "POST",
+        url: `http://localhost:8080/api/chats/${chatId}`,
+        data: {
+          message: prompt,
+        },
+      });
+      setReply(res.data);
+      setPrompt("");
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="sticky bottom-8  bg-neutral-900/80 p-4 backdrop-blur rounded-2xl">

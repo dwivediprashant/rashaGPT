@@ -4,13 +4,12 @@ export default function Loader2() {
   return (
     <div>
       <CirclesWithBar
-        height="100"
-        width="100"
-        color="#4fa94d"
-        outerCircleColor="#4fa94d"
-        innerCircleColor="#4fa94d"
-        barColor="#4fa94d"
-        ariaLabel="circles-with-bar-loading"
+        height="220"
+        width="220"
+        color="#ffffff"
+        outerCircleColor="#ffffff"
+        innerCircleColor="#ffffff"
+        barColor="#ff00009d"
         wrapperStyle={{}}
         wrapperClass=""
         visible={true}
