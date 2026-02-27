@@ -2,9 +2,10 @@ import "./Sidebar.css";
 import Chat from "./Chat.jsx";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { MyContext } from "../context/context.js";
 export default function Sidebar() {
-  const [allChats, setAllChats] = useState([{}]);
+  const { allChats, setAllChats } = useContext(MyContext);
   const navigate = useNavigate();
   const handleClick = async () => {
     const res = await axios({

@@ -1,13 +1,46 @@
-.user-msg {
-  background-color: #212121;
+.chat-msg {
   display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 1rem;
   border-radius: 12px;
-  max-width: min(70ch, 80%);
-  word-break: break-word;
-  white-space: pre-wrap;
+  max-width: min(80ch, 90%);
+  overflow-wrap: anywhere;
+  /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); */
+}
+
+.user-msg {
+  align-self: flex-end;
   margin-left: auto;
-  justify-content: flex-end;
+  background-color: #212121;
+  /* background: linear-gradient(135deg, #15803d, #059669); */
+  text-align: left;
+}
+
+.assistant-msg {
+  align-self: flex-start;
+  margin-right: auto;
+  /* background: linear-gradient(135deg, #1e293b, #0f172a); */
+  text-align: left;
+}
+
+.assistant-msg :where(p, li) {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.assistant-msg :where(pre) {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: #0f1115;
+}
+
+.assistant-msg :where(code) {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }

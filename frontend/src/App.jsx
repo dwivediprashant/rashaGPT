@@ -9,6 +9,7 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [reply, setReply] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [allChats, setAllChats] = useState([{}]);
   const provider = {
     prompt,
     setPrompt,
@@ -16,6 +17,8 @@ function App() {
     setReply,
     isLoading,
     setIsLoading,
+    allChats,
+    setAllChats,
   };
   return (
     <div>
