@@ -32,9 +32,9 @@ export default function ChatInput() {
         />
         <button
           type="submit"
-          className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white transition hover:bg-red-500"
+          className="inline-flex h-12 w-12 items-center justify-center text-white transition hover:text-2xl"
         >
-          <i className="fa-solid fa-arrow-up" />
+          <i class="fa-solid fa-paper-plane"></i>
         </button>
       </form>
       <div className="text-center p-3 claim-msg">

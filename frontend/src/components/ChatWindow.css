@@ -1,23 +1,24 @@
 /* .chat-window {
   overflow-y: scroll;
 } */
-.user-msg {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-left: 80%;
-  flex-wrap: wrap;
-  width: 200px;
-  padding: 0.5rem;
-  border-radius: 5px;
-}
+.user-msg,
 .assistant-msg {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-right: 80%;
+  display: inline-flex;
   flex-wrap: wrap;
-  width: 50vw;
+  gap: 0.25rem;
   padding: 1rem;
-  border-radius: 14px;
+  border-radius: 12px;
+  max-width: min(70ch, 80%);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.user-msg {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.assistant-msg {
+  margin-right: auto;
+  justify-content: flex-start;
 }
