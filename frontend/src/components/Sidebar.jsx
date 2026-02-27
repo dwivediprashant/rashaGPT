@@ -1,13 +1,10 @@
 import "./Sidebar.css";
 import Chat from "./Chat.jsx";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import axios from "axios";
-import { useEffect } from "react";
-import { useContext } from "react";
-import { MyContext } from "../context/context.js";
+import { useEffect, useState } from "react";
 export default function Sidebar() {
-  const { allChats, setAllChats } = useContext(MyContext);
-  const { chatId } = useParams();
+  const [allChats, setAllChats] = useState([{}]);
   const navigate = useNavigate();
   const handleClick = async () => {
     const res = await axios({
@@ -17,18 +14,18 @@ export default function Sidebar() {
     const chatId = res.data.savedChat._id;
     navigate(`/chat/${chatId}`);
   };
-  //whenever chatId changes get all chats
+
   useEffect(() => {
     const fetchChats = async () => {
       const res = await axios({
         method: "GET",
         url: `http://localhost:8080/api/chats/`,
       });
+      // console.log(res.data.allChats);
       setAllChats(res.data.allChats);
-      console.log(res.data.allChats);
     };
     fetchChats();
-  }, [chatId]);
+  }, []);
   return (
     <div>
       <div className="sidebar-chats p-4 max-w-[250px] shadow-xl/30 border-r border-solid] text-white">

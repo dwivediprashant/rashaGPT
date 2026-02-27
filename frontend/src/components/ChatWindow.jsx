@@ -6,6 +6,7 @@ import Sidebar from "./Sidebar";
 
 export default function ChatWindow() {
   const { reply } = useContext(MyContext);
+
   return (
     <div className="flex h-screen bg-neutral-950 text-white chat-window">
       <Sidebar />

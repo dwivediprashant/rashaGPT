@@ -8,14 +8,11 @@ import { useState } from "react";
 function App() {
   const [prompt, setPrompt] = useState("");
   const [reply, setReply] = useState(null);
-  const [allChats, setAllChats] = useState([]);
   const provider = {
     prompt,
     setPrompt,
     reply,
     setReply,
-    allChats,
-    setAllChats,
   };
   return (
     <div>

@@ -16,6 +16,7 @@ export default function ChatInput() {
         message: prompt,
       },
     });
+
     console.log(res.data.response);
     setReply(res.data);
     setPrompt("");
