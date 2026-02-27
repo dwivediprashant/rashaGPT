@@ -16,7 +16,7 @@ export default function Chat({ chat }) {
   };
   return (
     <div
-      className={`chat p-4 border-b-1 border-black ${location.pathname === `/chat/${chat._id}` ? "bg-blue-600" : " "}`}
+      className={`chat p-4 border-b-1 border-black ${location.pathname === `/chat/${chat._id}` ? "chat-path" : " "}`}
       onClick={handleClick}
     >
       {chat.title}

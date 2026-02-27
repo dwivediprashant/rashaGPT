@@ -13,11 +13,11 @@ import "highlight.js/styles/github-dark.css";
 export default function ChatWindow() {
   const { chatId } = useParams();
   console.log(chatId);
-  const { reply } = useContext(MyContext);
+  const { setIsLoading, reply } = useContext(MyContext);
   const [allMessages, setAllMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   //getting all messages
   useEffect(() => {
+    setIsLoading(true);
     const fetchMsg = async () => {
       try {
         const res = await axios({
@@ -36,12 +36,12 @@ export default function ChatWindow() {
   }, [reply, chatId]);
 
   return (
-    <div className="flex h-screen bg-neutral-950 text-white chat-window">
+    <div className="flex  bg-neutral-950 text-white chat-window">
       <Sidebar />
       <div className="flex h-full flex-1 flex-col m-8">
-        <div className="flex-1 overflow-y-auto p-8">
-          {isLoading || allMessages.length === 0 ? (
-            <div className="flex flex-col h-full items-center justify-center">
+        <div className="flex-1 overflow-y-auto pt-8 pb-32 pr-8 pl-8">
+          {allMessages.length === 0 ? (
+            <div className="flex flex-col h-full place-items-center place-content-center">
               <Loader5 />
               <WelcomeMsg />
             </div>

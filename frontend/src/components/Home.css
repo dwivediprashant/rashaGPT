@@ -4,3 +4,10 @@ body {
 .main-img img {
   width: 400px;
 }
+.start-chat {
+  /* border: 1px solid #08e7089d; */
+  background-color: #51f3519d;
+}
+.start-chat:hover {
+  opacity: 0.75;
+}

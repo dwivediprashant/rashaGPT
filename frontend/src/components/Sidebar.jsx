@@ -28,18 +28,23 @@ export default function Sidebar() {
   }, []);
   return (
     <div>
-      <div className="sidebar-chats p-4 max-w-[250px] shadow-xl/30 border-r border-solid] text-white">
+      <div className="sidebar-chats p-4 max-w-[250px] text-white">
         <button
           onClick={handleClick}
-          className="flex whitespace-nowrap items-center gap-2 px-8 py-2 m-4 bg-red-800 font-semibold text-white rounded"
+          className="new-chat flex whitespace-nowrap items-center gap-2 px-8 py-2 m-4  font-semibold text-white rounded"
         >
           New Chat <i className="fa-solid fa-pen-to-square" />
         </button>
-
-        <ul className="all-chat-list">
+        <div className="m-3 ">
+          <p className="text-gray-500">My Chats</p>
+        </div>
+        <ul className="all-chat-list pb-20">
           {allChats.map((chat, idx) => (
             <Chat chat={chat} key={idx} />
           ))}
+          <div className="text-center p-3 claim-msg text-xs">
+            © 2026 rasha-GPT. All rights reserved.
+          </div>
         </ul>
       </div>
     </div>

@@ -9,7 +9,7 @@ export default function Loader5() {
         color="#ffffff"
         outerCircleColor="#ffffff"
         innerCircleColor="#ffffff"
-        barColor="#ff00009d"
+        barColor="#08e7089d"
         wrapperStyle={{}}
         wrapperClass=""
         visible={true}

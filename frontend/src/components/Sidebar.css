@@ -1,13 +1,21 @@
-.sidebar-chats {
+.chat-window {
   height: 100vh;
+}
+.sidebar-chats {
+  height: 100%;
   display: flex;
   flex-direction: column;
+  box-shadow: 0.75px 0 0px #212121;
 }
 
 .all-chat-list {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 button {
   cursor: pointer;
+}
+
+.new-chat {
+  background-color: #51f3519d;
 }
