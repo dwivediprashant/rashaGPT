@@ -31,9 +31,11 @@ export default function Chat({ chat, redirectToNewChat }) {
     >
       <div className="flex place-items-center place-content-between">
         <div onClick={handleClick}>{chat.title}</div>
-        <button onClick={handleDeleteClick} className="del-btn">
-          <i class="fa-solid fa-trash text-white text-xs hover:text-sm"></i>
-        </button>
+        {location.pathname === `/chat/${chat._id}` && (
+          <button onClick={handleDeleteClick} className="del-btn">
+            <i class="fa-solid fa-trash text-white text-xs hover:text-sm"></i>
+          </button>
+        )}
       </div>
     </div>
   );
