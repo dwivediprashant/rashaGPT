@@ -35,8 +35,6 @@ router.get("/chats", async (req, res) => {
 
 router.get("/chats/:chatId", async (req, res) => {
   const { chatId } = req.params;
-  console.log(chatId);
-  // console.log(chatId);
   try {
     //find all messages that belongs to this chat
     const allMessageOfChat = await Message.find({ belongToChatId: chatId });
@@ -55,16 +53,21 @@ router.get("/chats/:chatId", async (req, res) => {
 // 3-> delete chat at : DELETE api/chat/:chatId
 router.delete("/chats/:chatId", async (req, res) => {
   const { chatId } = req.params;
-  // console.log(chatId);
   try {
     const deletedChat = await Chat.findByIdAndDelete(chatId, {
       runValidators: true,
     });
+    //Messages inside chat also need to be deleted
+    const deletedMessages = await Message.deleteMany({
+      belongToChatId: chatId,
+    });
+    // console.log(deletedMessages);
     if (!deletedChat) {
       res.status(404).json({ error: "Chat not found to delete" });
     }
     res.status(200).json({ status: "ok", deletedChat: deletedChat });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "failed to delete chat" });
   }
 });
