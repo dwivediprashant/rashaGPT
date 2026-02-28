@@ -7,7 +7,7 @@ export default function Navbar() {
   };
   return (
     <>
-      <div className="navbar flex place-content-between p-4">
+      <div className="navbar flex place-content-between pt-1">
         <div
           className="logo ml-8 text-2xl flex place-items-center"
           onClick={handleClick}
@@ -21,10 +21,10 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <i class="fa-brands fa-github text-white text-xl mr-8"></i>
+            <i className="fa-brands fa-github text-white text-xl mr-8"></i>
           </a>
 
-          <i class="fa-solid fa-arrow-right-from-bracket text-white text-xl mr-8"></i>
+          <i className="fa-solid fa-arrow-right-from-bracket text-white text-xl mr-8"></i>
         </div>
       </div>
     </>

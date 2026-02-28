@@ -28,7 +28,7 @@ export default function ChatInput() {
     }, 100);
   };
   return (
-    <div className="sticky overflow-visible w-[80vw] place-content-center place-items-center bottom-3 mr-12 bg-neutral-900/80 p-4 backdrop-blur rounded-2xl">
+    <div className="sticky overflow-visible w-[70vw] place-content-center place-items-center bottom-3 mr-12 bg-neutral-900/80 p-4 backdrop-blur rounded-2xl">
       <div className=" w-[100%] place-content-center">
         <form
           className="flex place-content-center gap-3 w-[100%]"
@@ -44,7 +44,7 @@ export default function ChatInput() {
             type="submit"
             className="inline-flex h-12 w-12 items-center justify-center text-white transition hover:text-2xl"
           >
-            <i class="fa-solid fa-paper-plane text-2xl"></i>
+            <i className="fa-solid fa-paper-plane text-2xl"></i>
           </button>
         </form>
         <div className="text-center p-3 claim-msg text-xs">

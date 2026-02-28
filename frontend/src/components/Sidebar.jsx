@@ -36,7 +36,7 @@ export default function Sidebar() {
           onClick={redirectToNewChat}
           className="new-chat flex whitespace-nowrap items-center gap-2 px-8 py-2 m-4  font-semibold text-white rounded"
         >
-          New Chat <i className="fa-solid fa-pen-to-square" />
+          New Chat <i className="fa-solid fa-plus"></i>
         </button>
         <div className="m-3 ">
           <p className="text-gray-500">My Chats</p>

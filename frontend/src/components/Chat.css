@@ -10,11 +10,12 @@
   border-radius: 14px;
   color: #51f3519d;
 }
-.chat-path i {
-  color: red;
-}
-.del-btn {
-  padding: 0px 7px 0px 7px;
-  background-color: #212121;
-  border-radius: 4px;
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  top: 200%;
+  right: 0;
+  left: 50%;
+  transform: translate(-50%);
 }
