@@ -5,13 +5,11 @@ import Message from "../models/Message.js";
 import getGroqAPIResponse from "../utils/GroqAPIResponse.js";
 
 //ROUTES-----------------------------
-let count = 0;
 // 0-> initialize/create the chat at : POST api/chats
 router.post("/chats", async (req, res) => {
   try {
-    count++;
     const newChat = new Chat({
-      title: `New chat ${count}`, //to be change later
+      title: "New chat",
     });
     const savedChat = await newChat.save();
     res.status(200).json({ success: "ok", savedChat });
@@ -54,9 +52,7 @@ router.get("/chats/:chatId", async (req, res) => {
 router.delete("/chats/:chatId", async (req, res) => {
   const { chatId } = req.params;
   try {
-    const deletedChat = await Chat.findByIdAndDelete(chatId, {
-      runValidators: true,
-    });
+    const deletedChat = await Chat.findByIdAndDelete(chatId);
     //Messages inside chat also need to be deleted
     const deletedMessages = await Message.deleteMany({
       belongToChatId: chatId,
@@ -108,4 +104,19 @@ router.post("/chats/:chatId", async (req, res) => {
   }
 });
 
+//5-> Update chat title route : PATCH /api/chats/:chatId
+router.patch("/chats/:chatId", async (req, res) => {
+  const { chatId } = req.params;
+  const { title } = req.body;
+  try {
+    const updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      { title },
+      { returnDocument: "after" },
+    );
+    res.status(200).json({ success: "ok", updatedChat });
+  } catch (error) {
+    console.log(error);
+  }
+});
 export default router;
