@@ -38,7 +38,7 @@ export default function ChatWindow() {
     <div className="flex  bg-neutral-950 text-white chat-window">
       <Sidebar />
       <div className="flex h-full flex-1 flex-col m-8">
-        <div className="flex-1 overflow-y-auto pt-8 pb-32  justify-center">
+        <div className="flex-1 overflow-y-auto pt-8 pb-32 pr-4 justify-center">
           {allMessages.length === 0 ? (
             <div className="flex flex-col h-full place-items-center place-content-center">
               <Loader6 />

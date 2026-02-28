@@ -6,29 +6,27 @@ import axios from "axios";
 export default function ChatInput() {
   const { chatId } = useParams();
   const { setIsLoading, prompt, setPrompt, setReply } = useContext(MyContext);
-  const getReply = (e) => {
+  const getReply = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(async () => {
-      try {
-        const res = await axios({
-          method: "POST",
-          url: `http://localhost:8080/api/chats/${chatId}`,
-          data: {
-            message: prompt,
-          },
-        });
-        setReply(res.data);
-        setPrompt("");
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 100);
+    try {
+      const res = await axios({
+        method: "POST",
+        url: `http://localhost:8080/api/chats/${chatId}`,
+        data: {
+          message: prompt,
+        },
+      });
+      setReply(res.data);
+      setPrompt("");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
-    <div className="sticky overflow-visible w-[70vw] place-content-center place-items-center bottom-3 mr-12 bg-neutral-900/80 p-4 backdrop-blur rounded-2xl">
+    <div className="sticky overflow-visible w-[75vw] place-content-center place-items-center bottom-3 mr-12 bg-neutral-900/80 p-4 backdrop-blur rounded-2xl">
       <div className=" w-[100%] place-content-center">
         <form
           className="flex place-content-center gap-3 w-[100%]"

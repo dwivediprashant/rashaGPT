@@ -70,7 +70,7 @@ export default function Chat({ chat, redirectToNewChat }) {
           </div>
 
           {location.pathname === `/chat/${chat._id}` && (
-            <div className="flex px-3  whitespace-nowrap">
+            <div className="flex px-3">
               <button onClick={handleEditClick} className="edit-btn mr-2">
                 <i
                   className="fa-solid fa-pen-to-square text-white text-sm hover:text-blue-600"
