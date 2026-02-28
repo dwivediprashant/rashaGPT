@@ -31,7 +31,7 @@ export default function Sidebar() {
 
   return (
     <div>
-      <div className="sidebar-chats p-4 max-w-[250px] text-white">
+      <div className="sidebar-chats p-4 w-[250px] text-white">
         <button
           onClick={redirectToNewChat}
           className="new-chat flex whitespace-nowrap items-center gap-2 px-8 py-2 m-4  font-semibold text-white rounded"

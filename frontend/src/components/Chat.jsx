@@ -25,12 +25,10 @@ export default function Chat({ chat, redirectToNewChat }) {
       url: `http://localhost:8080/api/chats/${chat._id}`,
     });
     setAllChats((prev) => prev.filter((c) => c._id !== chat._id));
-    redirectToNewChat();
   };
 
   const handleEditClick = async (e) => {
     e.preventDefault();
-    // console.log(e.target.value);
     setIsOpen(!isOpen);
   };
 
@@ -69,8 +67,8 @@ export default function Chat({ chat, redirectToNewChat }) {
             {chat.title}
           </div>
 
-          {location.pathname === `/chat/${chat._id}` && (
-            <div className="flex px-3">
+          {location.pathname !== `/chat/${chat._id}` && (
+            <div className="flex px-3 ml-2">
               <button onClick={handleEditClick} className="edit-btn mr-2">
                 <i
                   className="fa-solid fa-pen-to-square text-white text-sm hover:text-blue-600"
