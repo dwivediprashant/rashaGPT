@@ -7,13 +7,14 @@ import { MyContext } from "../context/context.js";
 export default function Sidebar() {
   const { allChats, setAllChats } = useContext(MyContext);
   const navigate = useNavigate();
-  const handleClick = async () => {
+  const redirectToNewChat = async () => {
     const res = await axios({
       method: "POST",
       url: "http://localhost:8080/api/chats",
     });
-    const chatId = res.data.savedChat._id;
-    navigate(`/chat/${chatId}`);
+    const savedChat = res.data.savedChat;
+    setAllChats((prev) => [savedChat, ...prev]);
+    navigate(`/chat/${savedChat._id}`);
   };
 
   useEffect(() => {
@@ -27,11 +28,12 @@ export default function Sidebar() {
     };
     fetchChats();
   }, []);
+
   return (
     <div>
       <div className="sidebar-chats p-4 max-w-[250px] text-white">
         <button
-          onClick={handleClick}
+          onClick={redirectToNewChat}
           className="new-chat flex whitespace-nowrap items-center gap-2 px-8 py-2 m-4  font-semibold text-white rounded"
         >
           New Chat <i className="fa-solid fa-pen-to-square" />
@@ -41,7 +43,7 @@ export default function Sidebar() {
         </div>
         <ul className="all-chat-list pb-20">
           {allChats.map((chat, idx) => (
-            <Chat chat={chat} key={idx} />
+            <Chat chat={chat} key={idx} redirectToNewChat={redirectToNewChat} />
           ))}
           <div className="text-center p-3 claim-msg text-xs">
             © 2026 rasha-GPT. All rights reserved.

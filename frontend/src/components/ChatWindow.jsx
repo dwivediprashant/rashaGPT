@@ -12,7 +12,6 @@ import "highlight.js/styles/github-dark.css";
 import Loader6 from "./Loaders/Loader6";
 export default function ChatWindow() {
   const { chatId } = useParams();
-  console.log(chatId);
   const { setIsLoading, reply } = useContext(MyContext);
   const [allMessages, setAllMessages] = useState([]);
   //getting all messages

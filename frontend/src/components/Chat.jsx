@@ -3,7 +3,7 @@ import "./Chat.css";
 import axios from "axios";
 import { useContext } from "react";
 import { MyContext } from "../context/context";
-export default function Chat({ chat }) {
+export default function Chat({ chat, redirectToNewChat }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { setAllChats } = useContext(MyContext);
@@ -13,7 +13,6 @@ export default function Chat({ chat }) {
       method: "GET",
       url: `http://localhost:8080/api/chats/${chat._id}`,
     });
-    console.log(res.data.messages);
     navigate(`/chat/${chat._id}`);
   };
   const handleDeleteClick = async (e) => {
@@ -23,7 +22,9 @@ export default function Chat({ chat }) {
       url: `http://localhost:8080/api/chats/${chat._id}`,
     });
     setAllChats((prev) => prev.filter((c) => c._id !== chat._id));
+    redirectToNewChat();
   };
+
   return (
     <div
       className={`chat p-4 border-b-1 border-black ${location.pathname === `/chat/${chat._id}` ? "chat-path" : " "}`}
