@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import chatRoutes from "./routes/chat.js";
+import authRoutes from "./routes/auth.js";
 import cors from "cors";
 //------db----
 import connectDB from "./db.js";
@@ -12,6 +13,7 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 //routes
+app.use("/api/auth", authRoutes);
 app.use("/api", chatRoutes);
 
 //listen fxn
