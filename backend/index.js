@@ -5,6 +5,7 @@ import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
 import cors from "cors";
 import sessionOptions from "./config/session.js";
+import corsOptions from "./config/cors.js";
 //------db----
 import connectDB from "./db.js";
 connectDB();
@@ -15,7 +16,7 @@ const port = process.env.PORT;
 //middlewares
 app.use(session(sessionOptions));
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 //routes
 app.use("/api/auth", authRoutes);

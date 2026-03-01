@@ -2,10 +2,12 @@
 const sessionOptions = {
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
-    maxAge: Date.now() + 24 * 60 * 60 * 1000, //24 hrs (in ms)
+    maxAge: 24 * 60 * 60 * 1000, //24 hrs (in ms)
     httpOnly: true,
+    secure: false,
+    sameSite: "lax",
   },
 };
 
