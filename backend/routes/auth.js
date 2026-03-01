@@ -39,7 +39,7 @@ router.post("/signup", async (req, res) => {
     sendMail({ name, email, userId: savedUserData._id });
     return res.status(201).json({
       success: true,
-      msg: "User registered successfully! Check your email to verify !",
+      msg: "User registered successfully! Check your email for verification link !",
       data: savedUserData,
     });
   } catch (error) {
@@ -48,6 +48,56 @@ router.post("/signup", async (req, res) => {
       success: false,
       msg: "Registration error",
       error: error.message,
+    });
+  }
+});
+
+//2--> verify email at : PATCH /api/auth/verify-mail
+
+router.patch("/verify-mail", async (req, res) => {
+  try {
+    const { id } = req.query;
+    //user Id misisng
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        msg: "Invalid or missing user ID!",
+      });
+    }
+
+    //id inavlid
+    const isUserExist = await User.findById(id);
+
+    if (!isUserExist) {
+      return res.status(500).json({
+        success: false,
+        msg: "Invalid user !",
+      });
+    }
+    //case : already verified mail
+    if (isUserExist.isVerified) {
+      return res.status(200).json({
+        success: true,
+        msg: "Email already verified !",
+      });
+    }
+    //success: update isVerified to true
+    const verifiedUser = await User.findByIdAndUpdate(
+      id,
+      { isVerified: true },
+      { returnDocument: "after" },
+    );
+
+    return res.status(200).json({
+      success: true,
+      msg: "Email verified successfully !",
+      verifiedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      msg: "Verification error",
+      error,
     });
   }
 });
