@@ -1,17 +1,22 @@
 import "dotenv/config";
 import express from "express";
+import session from "express-session";
 import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
 import cors from "cors";
+import sessionOptions from "./config/session.js";
 //------db----
 import connectDB from "./db.js";
 connectDB();
 //---------
 const app = express();
 const port = process.env.PORT;
+
 //middlewares
+app.use(session(sessionOptions));
 app.use(express.json());
 app.use(cors());
+
 //routes
 app.use("/api/auth", authRoutes);
 app.use("/api", chatRoutes);
