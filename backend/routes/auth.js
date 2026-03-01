@@ -54,7 +54,7 @@ router.post("/signup", async (req, res) => {
 
 //2--> verify email at : PATCH /api/auth/verify-mail
 
-router.patch("/verify-mail", async (req, res) => {
+router.get("/verify-mail", async (req, res) => {
   try {
     const { id } = req.query;
     //user Id misisng
@@ -91,7 +91,6 @@ router.patch("/verify-mail", async (req, res) => {
     return res.status(200).json({
       success: true,
       msg: "Email verified successfully !",
-      verifiedUser,
     });
   } catch (error) {
     return res.status(500).json({
