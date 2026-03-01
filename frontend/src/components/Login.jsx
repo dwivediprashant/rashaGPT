@@ -1,12 +1,68 @@
-import { Link } from "react-router";
+import axios from "axios";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { BASE_URL } from "../config/api";
+import Error from "./utils/Error";
+import Loader7 from "./Loaders/Loader7";
 export default function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const navigateToNewChat = async () => {
+    const res = await axios({
+      method: "POST",
+      url: "http://localhost:8080/api/chats",
+      withCredentials: true,
+    });
+    const chatId = res.data.savedChat._id;
+    navigate(`/chat/${chatId}`);
+    // console.log(chatId);
+  };
+
+  const handleLoginSubmit = async (e) => {
+    if (isLoading) {
+      return;
+    }
+    e.preventDefault();
+    setErrorMsg("");
+    setIsLoading(true);
+    try {
+      const res = await axios({
+        method: "POST",
+        baseURL: BASE_URL,
+        url: "/api/auth/signin",
+        data: {
+          email: email.trim(),
+          password,
+        },
+        withCredentials: true,
+      });
+
+      // after successfully login navigate to new chat
+      await navigateToNewChat();
+    } catch (error) {
+      const backendError =
+        error?.response?.data?.error || error?.response?.data?.msg;
+
+      setErrorMsg(backendError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <section className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
-        <form className="mt-8 space-y-6">
+        {errorMsg && <Error errorMsg={errorMsg} />}
+        <form className="mt-8 space-y-6" onSubmit={handleLoginSubmit}>
           <label className="block text-sm font-medium text-white/70">
             Email
             <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
               autoComplete="username"
               type="email"
               required
@@ -18,6 +74,9 @@ export default function Login() {
           <label className="block text-sm font-medium text-white/70">
             Password
             <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
               autoComplete="current-password"
               type="password"
               required
@@ -26,12 +85,19 @@ export default function Login() {
             />
           </label>
 
-          <button
-            type="submit"
-            className="w-full rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-white "
-          >
-            Login
-          </button>
+          {isLoading ? (
+            <div className="flex justify-center">
+              <Loader7 />
+            </div>
+          ) : (
+            <button
+              disabled={isLoading}
+              type="submit"
+              className="flex justify-center w-full rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-white transition hover:bg-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 mt-2"
+            >
+              Login
+            </button>
+          )}
         </form>
 
         <p className="mt-8 text-center text-sm text-white/70">
