@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import "./Navbar.css";
 export default function Navbar() {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate("/");
   };
+
   return (
     <>
       <div className="navbar flex place-content-between pt-1">
@@ -15,7 +16,7 @@ export default function Navbar() {
           <span className="text-white">rasha-</span>
           <span className="text-white font-bold">GPT</span>
         </div>
-        <div className="right-nav m-3">
+        <div className="flex justify-start  m-3">
           <a
             href="https://github.com/dwivediprashant/rashaGPT"
             target="_blank"
@@ -24,7 +25,10 @@ export default function Navbar() {
             <i className="fa-brands fa-github text-white text-xl mr-8"></i>
           </a>
 
-          <i className="fa-solid fa-arrow-right-from-bracket text-white text-xl mr-8"></i>
+          {/* <i className="fa-solid fa-arrow-right-from-bracket text-white text-xl mr-8"></i> */}
+          <Link to="/login" className="text-white mr-8 hover:text-green-600">
+            Login{" "}
+          </Link>
         </div>
       </div>
     </>
