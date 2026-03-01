@@ -1,12 +1,63 @@
+import { useState } from "react";
 import { Link } from "react-router";
+import { BASE_URL } from "../config/api";
+import axios from "axios";
+import Error from "./utils/Error";
+import EmailSuccess from "./utils/EmailSuccess";
+import Loader7 from "./Loaders/Loader7";
 export default function Register() {
-  return (
-    <section className="flex min-h-screen items-center justify-center px-4 py-5">
-      <div className="w-full max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
-        <form className="mt-8 space-y-3">
-          <label className="block text-sm font-medium tex-white">
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleFormSubmit = async (e) => {
+    if (isLoading) {
+      return;
+    }
+    e.preventDefault();
+    setIsLoading(true);
+    setIsEmailSent(false);
+    setErrorMsg("");
+    try {
+      const res = await axios({
+        method: "POST",
+        baseURL: BASE_URL,
+        url: "/api/auth/signup",
+        data: {
+          name: userName.trim(),
+          email: email.trim(),
+          password,
+        },
+      });
+      if (res.data?.success === true) {
+        setIsEmailSent(true);
+      }
+    } catch (error) {
+      const backendError =
+        error?.response?.data?.error || error?.response?.data?.msg;
+
+      setErrorMsg(backendError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return isEmailSent ? (
+    <EmailSuccess />
+  ) : (
+    <section className="flex  min-h-screen items-center justify-center px-4 py-5">
+      <div className="w-full  max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
+        {errorMsg && <Error errorMsg={errorMsg} />}
+        <form className="mt-8 space-y-3" onSubmit={handleFormSubmit}>
+          <label className="block text-sm font-medium text-white">
             Username
             <input
+              disabled={isLoading}
+              onChange={(e) => setUserName(e.target.value)}
+              value={userName}
               autoComplete="username"
               type="text"
               required
@@ -15,10 +66,12 @@ export default function Register() {
             />
           </label>
 
-          <label className="block text-sm font-medium tex-white">
+          <label className="block text-sm font-medium text-white">
             Email
             <input
-              autoComplete="username"
+              disabled={isLoading}
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
               type="email"
               required
               placeholder="you@example.com"
@@ -26,10 +79,13 @@ export default function Register() {
             />
           </label>
 
-          <label className="block text-sm font-medium tex-white">
+          <label className="block text-sm font-medium text-white">
             Password
             <input
-              autoComplete="current-password"
+              disabled={isLoading}
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              autoComplete="new-password"
               type="password"
               required
               placeholder="xxxxxx"
@@ -37,13 +93,21 @@ export default function Register() {
             />
           </label>
 
-          <button
-            type="submit"
-            className="w-full rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-white transition hover:bg-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 mt-2"
-          >
-            Send verification email
-          </button>
-          <p className="mt-8 text-center text-sm tex-white">
+          {isLoading ? (
+            <div className="flex justify-center">
+              <Loader7 />
+            </div>
+          ) : (
+            <button
+              disabled={isLoading}
+              type="submit"
+              className="flex justify-center w-full rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-white transition hover:bg-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 mt-2"
+            >
+              Send link to email
+            </button>
+          )}
+
+          <p className="mt-8 text-center text-sm text-white">
             Already have an account?{" "}
             <Link
               to="/login"
