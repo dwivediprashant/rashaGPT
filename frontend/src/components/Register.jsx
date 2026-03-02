@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { BASE_URL } from "../config/api";
-import axios from "axios";
+import apiClient from "../config/apiClient";
 import Error from "./utils/Error";
 import EmailSuccess from "./utils/EmailSuccess";
 import Loader7 from "./Loaders/Loader7";
@@ -23,9 +22,8 @@ export default function Register() {
     setIsEmailSent(false);
     setErrorMsg("");
     try {
-      const res = await axios({
+      const res = await apiClient({
         method: "POST",
-        baseURL: BASE_URL,
         url: "/api/auth/signup",
         data: {
           name: userName.trim(),

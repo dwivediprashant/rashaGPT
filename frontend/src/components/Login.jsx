@@ -1,7 +1,7 @@
-import axios from "axios";
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { BASE_URL } from "../config/api";
+import apiClient from "../config/apiClient";
 import Error from "./utils/Error";
 import Loader7 from "./Loaders/Loader7";
 export default function Login() {
@@ -12,10 +12,9 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const navigateToNewChat = async () => {
-    const res = await axios({
+    const res = await apiClient({
       method: "POST",
-      url: "http://localhost:8080/api/chats",
-      withCredentials: true,
+      url: "/api/chats",
     });
     const chatId = res.data.savedChat._id;
     navigate(`/chat/${chatId}`);
@@ -30,15 +29,13 @@ export default function Login() {
     setErrorMsg("");
     setIsLoading(true);
     try {
-      const res = await axios({
+      const res = await apiClient({
         method: "POST",
-        baseURL: BASE_URL,
         url: "/api/auth/signin",
         data: {
           email: email.trim(),
           password,
         },
-        withCredentials: true,
       });
 
       // after successfully login navigate to new chat

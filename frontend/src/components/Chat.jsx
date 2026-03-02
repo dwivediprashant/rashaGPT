@@ -1,10 +1,10 @@
 import { useLocation, useNavigate } from "react-router";
 import "./Chat.css";
-import axios from "axios";
+import apiClient from "../config/apiClient";
 import { useContext } from "react";
 import { MyContext } from "../context/context";
 import { useState } from "react";
-export default function Chat({ chat, redirectToNewChat }) {
+export default function Chat({ chat }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { setAllChats } = useContext(MyContext);
@@ -12,17 +12,17 @@ export default function Chat({ chat, redirectToNewChat }) {
   const [isOpen, setIsOpen] = useState(false);
   //get all messages from particular chat
   const handleClick = async (e) => {
-    const res = await axios({
+    const res = await apiClient({
       method: "GET",
-      url: `http://localhost:8080/api/chats/${chat._id}`,
+      url: `/api/chats/${chat._id}`,
     });
     navigate(`/chat/${chat._id}`);
   };
   const handleDeleteClick = async (e) => {
     e.preventDefault();
-    const res = await axios({
+    const res = await apiClient({
       method: "DELETE",
-      url: `http://localhost:8080/api/chats/${chat._id}`,
+      url: `/api/chats/${chat._id}`,
     });
     setAllChats((prev) => prev.filter((c) => c._id !== chat._id));
   };
@@ -37,9 +37,9 @@ export default function Chat({ chat, redirectToNewChat }) {
     try {
       if (chatTitle.length <= 1) {
       }
-      const res = await axios({
+      const res = await apiClient({
         method: "PATCH",
-        url: `http://localhost:8080/api/chats/${chat._id}`,
+        url: `/api/chats/${chat._id}`,
         data: {
           title: chatTitle.trim().length > 0 ? chatTitle.trim() : "New chat",
         },

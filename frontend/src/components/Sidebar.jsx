@@ -4,13 +4,16 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { MyContext } from "../context/context.js";
+import apiClient from "../config/apiClient";
 export default function Sidebar() {
   const { allChats, setAllChats } = useContext(MyContext);
   const navigate = useNavigate();
   const redirectToNewChat = async () => {
-    const res = await axios({
+    const res = await apiClient({
       method: "POST",
-      url: "http://localhost:8080/api/chats",
+      baseURL: BASE_URL,
+      url: "/api/chats",
+      withCredentials: true,
     });
     const savedChat = res.data.savedChat;
     setAllChats((prev) => [savedChat, ...prev]);
@@ -19,9 +22,9 @@ export default function Sidebar() {
 
   useEffect(() => {
     const fetchChats = async () => {
-      const res = await axios({
+      const res = await apiClient({
         method: "GET",
-        url: `http://localhost:8080/api/chats/`,
+        url: "/api/chats/",
       });
       // console.log(res.data.allChats);
       setAllChats(res.data.allChats);

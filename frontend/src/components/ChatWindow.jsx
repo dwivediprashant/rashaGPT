@@ -10,6 +10,7 @@ import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Loader6 from "./Loaders/Loader6";
+import apiClient from "../config/apiClient";
 export default function ChatWindow() {
   const { chatId } = useParams();
   const { reply } = useContext(MyContext);
@@ -18,9 +19,9 @@ export default function ChatWindow() {
   useEffect(() => {
     const fetchMsg = async () => {
       try {
-        const res = await axios({
+        const res = await apiClient({
           method: "GET",
-          url: `http://localhost:8080/api/chats/${chatId}`,
+          url: `/api/chats/${chatId}`,
         });
 
         setAllMessages(res.data.messages);

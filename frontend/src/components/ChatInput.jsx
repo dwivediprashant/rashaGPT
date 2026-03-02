@@ -3,16 +3,17 @@ import { useContext } from "react";
 import "./ChatInput.css";
 import { useParams } from "react-router";
 import axios from "axios";
+import apiClient from "../config/apiClient";
 export default function ChatInput() {
   const { chatId } = useParams();
-  const { setIsLoading, prompt, setPrompt, setReply } = useContext(MyContext);
+  const {  prompt, setPrompt, setReply } = useContext(MyContext);
   const getReply = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+   
     try {
-      const res = await axios({
+      const res = await apiClient({
         method: "POST",
-        url: `http://localhost:8080/api/chats/${chatId}`,
+        url: `/api/chats/${chatId}`,
         data: {
           message: prompt,
         },
@@ -21,9 +22,7 @@ export default function ChatInput() {
       setPrompt("");
     } catch (error) {
       console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
   return (
     <div className="sticky overflow-visible w-[75vw] place-content-center place-items-center bottom-3 mr-12 bg-neutral-900/80 p-4 backdrop-blur rounded-2xl">
