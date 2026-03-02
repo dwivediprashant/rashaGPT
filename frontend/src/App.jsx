@@ -10,15 +10,12 @@ import MainLayout from "./components/layouts/MainLayout";
 function App() {
   const [prompt, setPrompt] = useState("");
   const [reply, setReply] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [allChats, setAllChats] = useState([{}]);
   const provider = {
     prompt,
     setPrompt,
     reply,
     setReply,
-    isLoading,
-    setIsLoading,
     allChats,
     setAllChats,
   };

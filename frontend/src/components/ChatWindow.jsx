@@ -12,11 +12,10 @@ import "highlight.js/styles/github-dark.css";
 import Loader6 from "./Loaders/Loader6";
 export default function ChatWindow() {
   const { chatId } = useParams();
-  const { setIsLoading, reply } = useContext(MyContext);
+  const { reply } = useContext(MyContext);
   const [allMessages, setAllMessages] = useState([]);
   //getting all messages
   useEffect(() => {
-    setIsLoading(true);
     const fetchMsg = async () => {
       try {
         const res = await axios({
@@ -27,8 +26,6 @@ export default function ChatWindow() {
         setAllMessages(res.data.messages);
       } catch (error) {
         console.log(error);
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchMsg();
