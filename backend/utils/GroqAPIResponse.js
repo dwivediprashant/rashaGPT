@@ -22,7 +22,7 @@ const getGroqAPIResponse = async (message) => {
     return result.data.choices[0].message.content;
   } catch (err) {
     console.log("GROQ API related error!", err);
-    res.status(500).json({ error: "GROQ API related error!" });
+    throw err;
   }
 };
 

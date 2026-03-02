@@ -7,6 +7,12 @@ const messageSchema = new mongoose.Schema({
   belongToChatId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Chat",
+    required: true,
+  },
+  owner:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
   role: {
     type: String,

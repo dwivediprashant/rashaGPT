@@ -7,6 +7,14 @@ import sendMail from "../utils/sendEmail.js";
 import signinValidator from "../validations/userSignin.js";
 import matchPassword from "../utils/matchPassword.js";
 
+// 0-> To check session
+router.get("/me", (req, res) => {
+  if(req.session.user_id){
+    return res.json({ user_id: req.session.user_id });
+  }
+  return res.json({ user_id: null });
+});
+
 // 1-> signup route at : POST /api/auth/signup
 router.post("/signup", async (req, res) => {
   try {
@@ -170,5 +178,16 @@ router.post("/signin", async (req, res) => {
     });
   }
 });
+
+
+//6->  logout user at : POST /api/logout
+router.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ success: false });
+    res.clearCookie("connect.sid");
+    return res.json({ success: true });
+  });
+});
+
 
 export default router;
