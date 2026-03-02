@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import ChatInput from "./ChatInput";
-import { MyContext } from "../context/context";
+import { MainContext } from "../context/MainContext";
 import "./ChatWindow.css";
 import Sidebar from "./Sidebar";
 import { useParams } from "react-router";
-import axios from "axios";
+import AuthContext from "../context/AuthContext";
 import WelcomeMsg from "./WelcomeMsg";
 import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
@@ -13,11 +13,13 @@ import Loader6 from "./Loaders/Loader6";
 import apiClient from "../config/apiClient";
 export default function ChatWindow() {
   const { chatId } = useParams();
-  const { reply } = useContext(MyContext);
+  const { reply } = useContext(MainContext);
+  const {isAuthenticated,authLoading}=useContext(AuthContext);
+
   const [allMessages, setAllMessages] = useState([]);
+
   //getting all messages
-  useEffect(() => {
-    const fetchMsg = async () => {
+  const fetchMsg = async () => {
       try {
         const res = await apiClient({
           method: "GET",
@@ -29,8 +31,11 @@ export default function ChatWindow() {
         console.log(error);
       }
     };
+
+  useEffect(() => {
     fetchMsg();
-  }, [reply, chatId]);
+  }, [authLoading, isAuthenticated, reply, chatId]);
+
 
   return (
     <div className="flex  bg-neutral-950 text-white chat-window">

@@ -1,10 +1,21 @@
 import { Link, useNavigate } from "react-router";
 import "./Navbar.css";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 export default function Navbar() {
+
+  const {isAuthenticated,logout}=useContext(AuthContext)
   const navigate = useNavigate();
+
   const handleClick = () => {
     navigate("/");
   };
+
+
+  const handleLogout=async()=>{
+    await logout();
+    navigate("/login");
+  }
 
   return (
     <>
@@ -26,9 +37,11 @@ export default function Navbar() {
           </a>
 
           {/* <i className="fa-solid fa-arrow-right-from-bracket text-white text-xl mr-8"></i> */}
-          <Link to="/login" className="text-white mr-8 hover:text-green-600">
+          {isAuthenticated ? <button onClick={handleLogout} className="text-white mr-8 hover:text-green-600">
+            Logout{" "}
+          </button>: <Link to="/login" className="text-white mr-8 hover:text-green-600">
             Login{" "}
-          </Link>
+          </Link>}
         </div>
       </div>
     </>

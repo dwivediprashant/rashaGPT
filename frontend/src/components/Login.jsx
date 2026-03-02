@@ -4,7 +4,10 @@ import { Link, useNavigate } from "react-router";
 import apiClient from "../config/apiClient";
 import Error from "./utils/Error";
 import Loader7 from "./Loaders/Loader7";
+import AuthContext from "../context/AuthContext";
+import { useContext } from "react";
 export default function Login() {
+  const {isAuthenticated,login}=useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,32 +15,22 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const navigateToNewChat = async () => {
+    if(!isAuthenticated){
+      navigate("/login")
+    }
     const res = await apiClient({
       method: "POST",
       url: "/api/chats",
     });
     const chatId = res.data.savedChat._id;
     navigate(`/chat/${chatId}`);
-    // console.log(chatId);
   };
 
   const handleLoginSubmit = async (e) => {
-    if (isLoading) {
-      return;
-    }
     e.preventDefault();
-    setErrorMsg("");
     setIsLoading(true);
     try {
-      const res = await apiClient({
-        method: "POST",
-        url: "/api/auth/signin",
-        data: {
-          email: email.trim(),
-          password,
-        },
-      });
-
+     await login({email:email.trim(),password}) 
       // after successfully login navigate to new chat
       await navigateToNewChat();
     } catch (error) {

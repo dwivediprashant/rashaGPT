@@ -2,12 +2,12 @@ import { useLocation, useNavigate } from "react-router";
 import "./Chat.css";
 import apiClient from "../config/apiClient";
 import { useContext } from "react";
-import { MyContext } from "../context/context";
+import { MainContext } from "../context/MainContext";
 import { useState } from "react";
 export default function Chat({ chat }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setAllChats } = useContext(MyContext);
+  const { setAllChats } = useContext(MainContext);
   const [chatTitle, setChatTitle] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   //get all messages from particular chat

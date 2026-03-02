@@ -1,19 +1,17 @@
 import "./Sidebar.css";
 import Chat from "./Chat.jsx";
 import { useNavigate } from "react-router";
-import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { MyContext } from "../context/context.js";
+import { MainContext } from "../context/MainContext.jsx";
 import apiClient from "../config/apiClient";
 export default function Sidebar() {
-  const { allChats, setAllChats } = useContext(MyContext);
+  const { allChats, setAllChats } = useContext(MainContext);
   const navigate = useNavigate();
+
   const redirectToNewChat = async () => {
     const res = await apiClient({
       method: "POST",
-      baseURL: BASE_URL,
       url: "/api/chats",
-      withCredentials: true,
     });
     const savedChat = res.data.savedChat;
     setAllChats((prev) => [savedChat, ...prev]);
@@ -26,7 +24,6 @@ export default function Sidebar() {
         method: "GET",
         url: "/api/chats/",
       });
-      // console.log(res.data.allChats);
       setAllChats(res.data.allChats);
     };
     fetchChats();

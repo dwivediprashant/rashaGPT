@@ -2,17 +2,28 @@ import { useNavigate } from "react-router";
 import "./Home.css";
 import Loader3 from "./Loaders/Loader3";
 import apiClient from "../config/apiClient";
+import AuthContext from "../context/AuthContext";
+import { useContext } from "react";
 export default function Home() {
+  const {isAuthenticated}=useContext(AuthContext);
+
   const navigate = useNavigate();
 
-  
   const handleClick = async () => {
-    const res = await apiClient({
-      method: "POST",
-      url: "/api/chats",
-    });
-    const chatId = res.data.savedChat._id;
-    navigate(`/chat/${chatId}`);
+
+    if(!isAuthenticated){
+      navigate("/login");
+    }
+   try {
+      const res = await apiClient({
+        method: "POST",
+        url: "/api/chats",
+      });
+      const chatId = res.data.savedChat._id;
+      navigate(`/chat/${chatId}`);
+    } catch (error) {
+      console.log("Failed to create chat" + error)
+    }
   };
 
 

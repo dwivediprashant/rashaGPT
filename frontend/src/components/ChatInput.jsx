@@ -1,12 +1,11 @@
-import { MyContext } from "../context/context";
+import { MainContext } from "../context/MainContext";
 import { useContext } from "react";
 import "./ChatInput.css";
 import { useParams } from "react-router";
-import axios from "axios";
 import apiClient from "../config/apiClient";
 export default function ChatInput() {
   const { chatId } = useParams();
-  const {  prompt, setPrompt, setReply } = useContext(MyContext);
+  const {  prompt, setPrompt, setReply } = useContext(MainContext);
   const getReply = async (e) => {
     e.preventDefault();
    

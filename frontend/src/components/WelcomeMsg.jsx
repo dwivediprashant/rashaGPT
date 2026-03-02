@@ -1,27 +1,39 @@
-import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import Loader4 from "./Loaders/Loader4";
+import {  useEffect, useState } from "react";
+import getJoke from "./utils/getJoke";
+import { useContext } from "react";
+import {MainContext} from "../context/MainContext";
 export default function WelcomeMsg() {
-  const [joke, setJoke] = useState("");
-  const getJoke = async () => {
-    try {
-      const joke = await axios.get(
-        "https://official-joke-api.appspot.com/random_joke",
-      );
-      setJoke(joke.data);
-    } catch (error) {
-      console.log(error);
+  const {prompt}=useContext(MainContext);
+  const [setup,setSetup]=useState("");
+  const [punchline,setPunchline]=useState("");
+
+
+  useEffect(()=>{
+    if(!prompt || prompt=="" || prompt.length==0){
+     
+        const fetchJoke=async()=>{
+           try {
+        const joke=await getJoke()
+        const {setup,punchline}=joke;
+        setSetup(setup)
+        setPunchline(punchline)
+      
+      } catch (error) {
+        console.log("Faliled to fetch joke" + error)
+      }
+      
     }
-  };
-  useEffect(() => {
-    getJoke();
-  }, []);
+    fetchJoke();
+  }
+},[prompt])
   return (
     <div className="m-3 text-center">
-      <div>
-        <p>{joke.setup}</p>
-        <p>{joke.punchline}</p>
+      <div className="flex-col items-center">
+        <p>{setup}</p>
+        <p>{punchline}</p>
       </div>
     </div>
   );
+
 }
+
