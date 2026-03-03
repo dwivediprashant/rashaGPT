@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import MainLayout from "./components/layouts/MainLayout";
 import ProtectedRoute from "./components/utils/ProtectedRoute";
+import NotFound from "./components/utils/NotFound";
 function App() {
   
   return (
@@ -22,6 +23,8 @@ function App() {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
  
     </div>
