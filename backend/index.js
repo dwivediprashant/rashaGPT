@@ -1,3 +1,7 @@
+//production ipv4 force
+import dns from "node:dns";
+dns.setDefaultResultOrder("ipv4first");
+
 import "dotenv/config";
 import express from "express";
 import session from "express-session";
