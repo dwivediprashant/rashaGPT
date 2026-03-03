@@ -27,7 +27,11 @@ export default function Login() {
   };
 
   const handleLoginSubmit = async (e) => {
+    if(isLoading){
+      return;
+    }
     e.preventDefault();
+    setErrorMsg("");
     setIsLoading(true);
     try {
      await login({email:email.trim(),password}) 

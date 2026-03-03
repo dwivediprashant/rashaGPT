@@ -28,9 +28,33 @@ export default function AuthProvider({children}) {
     }
   }
 
-  useEffect(()=>{
-    checkSession()
-  },[])
+    //401 : session expired
+    useEffect(() => {
+      // Setup 401 interceptor
+      const interceptor = apiClient.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+          if (error.response?.status === 401) {
+            setuserId(null);
+            setAuthLoading(false);
+            window.location.href = "/login";
+          }
+          return Promise.reject(error);
+        }
+      );
+    
+      //intila session check
+      if(!userId){
+        checkSession()
+      }
+
+
+      return () => {
+        apiClient.interceptors.response.eject(interceptor);
+      };
+    }, [userId]);
+
+  
 
   //logout
   const logout=  async()=>{
