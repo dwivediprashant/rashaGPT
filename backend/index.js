@@ -22,6 +22,17 @@ app.use(cors(corsOptions));
 app.use("/api/auth", authRoutes);
 app.use("/api", chatRoutes);
 
+
+//No route match
+app.use((req,res)=>{
+    res.status(404).json({message:"Route not found"});
+})
+
+//error handler
+app.use((err,req,res,next)=>{
+    console.log(err);
+    res.status(err.status || 500).json({message:err.message});
+})
 //listen fxn
 app.listen(port, (req, res) => {
   console.log(`Server running at port ${port}`);
