@@ -1,8 +1,7 @@
-
 import apiClient from "../config/apiClient";
 import { useLocation, useNavigate } from "react-router";
 import { useState } from "react";
-import Error from "./utils/Error";
+import Notice from "./utils/Notice";
 import Loader7 from "./Loaders/Loader7";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
@@ -84,7 +83,7 @@ export default function VerifyOtp() {
   return (
     <section className="flex min-h-screen items-center justify-center px-4 py-5">
       <div className="w-full max-w-md rounded-3xl p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
-        <div className="flex justify-center text-red-600">DO NOT REFRESH THE PAGE</div>
+
         <h2 className="text-2xl font-semibold text-center">
           Verify OTP
         </h2>
@@ -110,7 +109,7 @@ export default function VerifyOtp() {
           </label>
 
 
-          {errorMsg && <Error errorMsg={errorMsg} />}
+          {errorMsg && <Notice msg={errorMsg} />}
 
           <button
             type="submit"

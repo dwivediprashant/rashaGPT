@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import apiClient from "../config/apiClient";
-import Error from "./utils/Error";
+import Notice from "./utils/Notice";
 import OtpSuccess from "./utils/OtpSuccess";
 import Loader7 from "./Loaders/Loader7";
 import { useNavigate } from "react-router";
 export default function Register() {
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState("");
@@ -49,10 +49,10 @@ export default function Register() {
       setIsLoading(false);
     }
   };
-  return  (
+  return (
     <section className="flex  min-h-screen items-center justify-center px-4 py-5">
       <div className="w-full  max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
-        {errorMsg && <Error errorMsg={errorMsg} />}
+        {errorMsg && <Notice msg={errorMsg} />}
         <form className="mt-8 space-y-3" onSubmit={handleFormSubmit}>
           <label className="block text-sm font-medium text-white">
             Username

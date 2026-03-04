@@ -1,15 +1,15 @@
 
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import Error from "./utils/Error";
+import Notice from "./utils/Notice";
 import Loader7 from "./Loaders/Loader7";
 import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
 export default function Login() {
-  const {isAuthenticated,login}=useContext(AuthContext);
+  const { isAuthenticated, login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const {state}=useLocation();
-  const userId=state?.userId;
+  const { state } = useLocation();
+  const userId = state?.userId;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -17,10 +17,10 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  
+
 
   const handleLoginSubmit = async (e) => {
-    if(isLoading){
+    if (isLoading) {
       return;
     }
     e.preventDefault();
@@ -28,12 +28,12 @@ export default function Login() {
     setErrorMsg("");
     setIsLoading(true);
     try {
-      const response = await login({email:email.trim(),password,phoneNumber}) 
+      const response = await login({ email: email.trim(), password, phoneNumber })
 
       setIsOtpSent(true);
- 
-      navigate("/verify-otp",{state:{email,password,phoneNumber}});
-      
+
+      navigate("/verify-otp", { state: { email, password, phoneNumber } });
+
     } catch (error) {
       const backendError =
         error?.response?.data?.error || error?.response?.data?.msg;
@@ -46,7 +46,7 @@ export default function Login() {
   return (
     <section className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
-        {errorMsg && <Error errorMsg={errorMsg} />}
+        {errorMsg && <Notice msg={errorMsg} />}
         <form className="mt-8 space-y-6" onSubmit={handleLoginSubmit}>
           <label className="block text-sm font-medium text-white/70">
             Email
