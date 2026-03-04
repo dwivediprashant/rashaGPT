@@ -2,16 +2,20 @@ import { useState } from "react";
 import { Link } from "react-router";
 import apiClient from "../config/apiClient";
 import Error from "./utils/Error";
-import EmailSuccess from "./utils/EmailSuccess";
+import OtpSuccess from "./utils/OtpSuccess";
 import Loader7 from "./Loaders/Loader7";
+import { useNavigate } from "react-router";
 export default function Register() {
-  const [isLoading, setIsLoading] = useState(false);
 
+  const navigate=useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
 
   const handleFormSubmit = async (e) => {
     if (isLoading) {
@@ -19,7 +23,6 @@ export default function Register() {
     }
     e.preventDefault();
     setIsLoading(true);
-    setIsEmailSent(false);
     setErrorMsg("");
     try {
       const res = await apiClient({
@@ -29,10 +32,13 @@ export default function Register() {
           name: userName.trim(),
           email: email.trim(),
           password,
+          phoneNumber,
         },
       });
+      console.log(res.data);
       if (res.data?.success === true) {
-        setIsEmailSent(true);
+
+        navigate("/login");
       }
     } catch (error) {
       const backendError =
@@ -43,9 +49,7 @@ export default function Register() {
       setIsLoading(false);
     }
   };
-  return isEmailSent ? (
-    <EmailSuccess />
-  ) : (
+  return  (
     <section className="flex  min-h-screen items-center justify-center px-4 py-5">
       <div className="w-full  max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
         {errorMsg && <Error errorMsg={errorMsg} />}
@@ -78,6 +82,20 @@ export default function Register() {
           </label>
 
           <label className="block text-sm font-medium text-white">
+            Phone Number
+            <input
+              disabled={isLoading}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              value={phoneNumber}
+              autoComplete="username"
+              type="text"
+              required
+              placeholder="johndoe"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 outline-none transition"
+            />
+          </label>
+
+          <label className="block text-sm font-medium text-white">
             Password
             <input
               disabled={isLoading}
@@ -101,7 +119,7 @@ export default function Register() {
               type="submit"
               className="flex justify-center w-full rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-white transition hover:bg-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 mt-2"
             >
-              Send link to email
+              Create account
             </button>
           )}
 

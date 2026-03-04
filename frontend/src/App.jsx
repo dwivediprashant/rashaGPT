@@ -7,6 +7,8 @@ import Register from "./components/Register";
 import MainLayout from "./components/layouts/MainLayout";
 import ProtectedRoute from "./components/utils/ProtectedRoute";
 import NotFound from "./components/utils/NotFound";
+import VerifyOtp from "./components/VerifyOtp";
+
 function App() {
   
   return (
@@ -23,7 +25,7 @@ function App() {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
+          <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
  

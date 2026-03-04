@@ -1,7 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import apiClient from "../config/apiClient";
+import { Link, useLocation, useNavigate } from "react-router";
 import Error from "./utils/Error";
 import Loader7 from "./Loaders/Loader7";
 import AuthContext from "../context/AuthContext";
@@ -9,34 +8,32 @@ import { useContext } from "react";
 export default function Login() {
   const {isAuthenticated,login}=useContext(AuthContext);
   const navigate = useNavigate();
+  const {state}=useLocation();
+  const userId=state?.userId;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const navigateToNewChat = async () => {
-    if(!isAuthenticated){
-      navigate("/login")
-    }
-    const res = await apiClient({
-      method: "POST",
-      url: "/api/chats",
-    });
-    const chatId = res.data.savedChat._id;
-    navigate(`/chat/${chatId}`);
-  };
+  
 
   const handleLoginSubmit = async (e) => {
     if(isLoading){
       return;
     }
     e.preventDefault();
+    setIsOtpSent(false);
     setErrorMsg("");
     setIsLoading(true);
     try {
-     await login({email:email.trim(),password}) 
-      // after successfully login navigate to new chat
-      await navigateToNewChat();
+      const response = await login({email:email.trim(),password,phoneNumber}) 
+
+      setIsOtpSent(true);
+ 
+      navigate("/verify-otp",{state:{email,password,phoneNumber}});
+      
     } catch (error) {
       const backendError =
         error?.response?.data?.error || error?.response?.data?.msg;
@@ -65,6 +62,21 @@ export default function Login() {
             />
           </label>
 
+
+          <label className="block text-sm font-medium text-white">
+            Phone Number
+            <input
+              disabled={isLoading}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              value={phoneNumber}
+              autoComplete="username"
+              type="text"
+              required
+              placeholder="johndoe"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 outline-none transition"
+            />
+          </label>
+
           <label className="block text-sm font-medium text-white/70">
             Password
             <input
@@ -89,7 +101,7 @@ export default function Login() {
               type="submit"
               className="flex justify-center w-full rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-white transition hover:bg-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 mt-2"
             >
-              Login
+              Send otp
             </button>
           )}
         </form>
