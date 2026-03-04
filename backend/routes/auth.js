@@ -3,7 +3,7 @@ const router = express.Router();
 import User from "../models/User.js";
 import registrationValidator from "../validations/userRegistration.js";
 import securePassword from "../utils/securePassword.js";
-import sendMail from "../utils/sendEmail.js";
+import sendOtp from "../utils/sendOtp.js";
 import signinValidator from "../validations/userSignin.js";
 import matchPassword from "../utils/matchPassword.js";
 
@@ -28,7 +28,7 @@ router.post("/signup", async (req, res) => {
       });
     }
 
-    const { name, email, password } = value;
+    const { name, email, password ,phoneNumber} = value;
 
     const isEmailExist = await User.findOne({ email });
     if (isEmailExist) {
@@ -37,25 +37,26 @@ router.post("/signup", async (req, res) => {
         .json({ success: false, msg: "Email already registered" });
     }
 
+    const isPhoneExist=await User.findOne({phoneNumber});
+    if(isPhoneExist){
+      return res.status(409)
+      .json({success:false,msg:"Phone number already registered"})
+    } 
+
     const securePass = await securePassword(password);
     const user = new User({
       name,
       email,
       password: securePass,
+      phoneNumber,
     });
 
     const savedUserData = await user.save();
-    //send verification mail to registered user
-    try {
-      await sendMail({ name, email, userId: savedUserData._id });
-    } catch (error) {
-      console.error("Mail failed");
-    }
+
 
     return res.status(201).json({
       success: true,
-      msg: "User registered successfully! Check your email for verification link !",
-      data: savedUserData,
+      msg: "User registered successfully!",
     });
   } catch (error) {
     console.error(error);
@@ -66,50 +67,68 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-//2--> verify email at : GET /api/auth/verify-mail
+//2--> verify otp at : GET /api/auth/verify-otp
 
-router.get("/verify-mail", async (req, res) => {
+
+router.post("/verify-otp", async (req, res) => {
   try {
-    const { id } = req.query;
-    //user Id misisng
-    if (!id) {
+  
+    const {otp }=req.body;
+  
+
+    const userId=req.session.userId;
+
+    if (!userId) {
       return res.status(400).json({
         success: false,
-        msg: "Invalid or missing user ID!",
+        msg: "Session expired. Please login again."
       });
     }
 
-    //id inavlid
-    const user = await User.findById(id);
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        msg: "Invalid user !",
-      });
+    ///case : entered otp is wrong
+    if(otp!==req.session.otp){
+      return res.status(422).json({
+        success:false,
+        msg:"Invalid OTP"
+      })
     }
-    //case : already verified mail
-    if (user.isVerified) {
-      return res.status(200).json({
-        success: true,
-        msg: "Email already verified !",
-      });
-    }
-    //success: update isVerified to true
 
-    user.isVerified = true;
-    await user.save();
+    //case: expired otp
+    const currTime=Date.now();
+    if(currTime > req.session.otpExpiry){
+      return res.status(422).json({
+        success:false,
+        msg:"OTP expired"
+      })
+    }
+
+    //success case : entered otp is correct and not expired
+    const userData=await User.findById(userId);
+    userData.isVerified=true;
+    await userData.save();
+
+  
+    req.session.otp=null;
+    req.session.otpExpiry=null;
+
+    req.session.user_id=userId;//restart session when user is verified
+
 
     return res.status(200).json({
-      success: true,
-      msg: "Email verified successfully !",
-    });
+      success:true,
+      msg:"User verified successfully!",
+      userId:userData._id
+    })
+
+
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      success: false,
-      msg: "Internal server error",
-    });
+      success:false,
+      msg:"Internal server error"
+    })
   }
 });
 
@@ -128,17 +147,27 @@ router.post("/signin", async (req, res) => {
       });
     }
 
-    const { email, password } = value;
+    const { email, password,phoneNumber } = value;
+
 
     const userData = await User.findOne({ email });
-
+    
     //case: email is wrong ie not registered email
     if (!userData) {
-      return res.status(401).json({
+      return res.status(422).json({
         success: false,
         msg: "Invalid email or password",
       });
     }
+
+
+    //case : phone number not registered
+
+    if(userData.phoneNumber!==phoneNumber){
+      return res.status(422)
+      .json({success:false,msg:"Phone number is not registered with this user!"})
+    }
+    
 
     // password match
 
@@ -148,27 +177,28 @@ router.post("/signin", async (req, res) => {
     });
 
     if (!isMatch) {
-      return res.status(401).json({
+      return res.status(422).json({
         success: false,
         msg: "Invalid email or password",
       });
     }
 
-    //case : email and password are correct but not verified email
-    if (!userData.isVerified) {
-      return res.status(403).json({
-        success: false,
-        msg: "Please verify your email account first then login",
-      });
-    }
 
-    //success case : email and password are correct and verified email
+    //case : user entered all details correctly and now send otp
+    const otp=await sendOtp({phoneNumber});
 
-    req.session.user_id = userData._id; //session created
+
+    //creat user session
+    req.session.userId=userData._id;
+    
+    //create otp session
+    req.session.otp=otp;
+    req.session.otpExpiry=Date.now()+1000*60*1;//1 min
+
 
     return res.status(200).json({
       success: true,
-      msg: "User logged in successfully !",
+      msg: "OTP sent successfully to your entered phone number!",
     });
   } catch (error) {
     console.error(error);
@@ -181,7 +211,10 @@ router.post("/signin", async (req, res) => {
 
 
 //6->  logout user at : POST /api/logout
-router.post("/logout", (req, res) => {
+router.post("/logout", async (req, res) => {
+  const user=await User.findById(req.session.userId);
+  user.isVerified=false;
+  await user.save();
   req.session.destroy((err) => {
     if (err) return res.status(500).json({ success: false });
     res.clearCookie("connect.sid");

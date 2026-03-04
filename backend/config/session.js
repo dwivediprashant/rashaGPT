@@ -11,7 +11,7 @@ const sessionOptions = {
   cookie: {
     maxAge: 24*60*60*1000, //24 hrs (in ms)
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "lax",
   },
 };

@@ -21,15 +21,11 @@ const sendMail = async ({ name, email, userId }) => {
       html: `<p>Hi ${name} Please <a href="${process.env.SERVER_URL}/api/auth/verify-mail?id=${userId}">Click here</a></p> to verify your email.`,
     };
 
-    await transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent successfully! " + info.response);
-      }
-    });
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully!");
   } catch (error) {
     console.log(error.message);
+    throw error;
   }
 };
 
