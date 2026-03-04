@@ -76,7 +76,7 @@ router.post("/verify-otp", async (req, res) => {
     const {otp }=req.body;
   
 
-    const userId=req.session.userId;
+    const userId=req.session.user_id;
 
     if (!userId) {
       return res.status(400).json({
@@ -105,7 +105,7 @@ router.post("/verify-otp", async (req, res) => {
 
     //success case : entered otp is correct and not expired
     const userData=await User.findById(userId);
-    userData.isVerified=true;
+
     await userData.save();
 
   
@@ -149,7 +149,12 @@ router.post("/signin", async (req, res) => {
 
     const { email, password,phoneNumber } = value;
 
-
+    if(phoneNumber!==process.env.VERIFIED_PHONE_NUMBER){
+      return res.status(422).json({
+        success:false,
+        msg:"OTP verification is not available for free tier users"
+      })
+    }
     const userData = await User.findOne({ email });
     
     //case: email is wrong ie not registered email
@@ -189,11 +194,11 @@ router.post("/signin", async (req, res) => {
 
 
     //creat user session
-    req.session.userId=userData._id;
+    req.session.user_id=userData._id;
     
     //create otp session
     req.session.otp=otp;
-    req.session.otpExpiry=Date.now()+1000*60*1;//1 min
+    req.session.otpExpiry=Date.now()+1000*60*2;//2 min
 
 
     return res.status(200).json({
@@ -212,8 +217,8 @@ router.post("/signin", async (req, res) => {
 
 //6->  logout user at : POST /api/logout
 router.post("/logout", async (req, res) => {
-  const user=await User.findById(req.session.userId);
-  user.isVerified=false;
+  const user=await User.findById(req.session.user_id);
+
   await user.save();
   req.session.destroy((err) => {
     if (err) return res.status(500).json({ success: false });
