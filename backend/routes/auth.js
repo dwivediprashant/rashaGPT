@@ -8,11 +8,21 @@ import signinValidator from "../validations/userSignin.js";
 import matchPassword from "../utils/matchPassword.js";
 
 // 0-> To check session
-router.get("/me", (req, res) => {
+router.get("/me", async (req, res) => {
   if(req.session.user_id){
-    return res.json({ user_id: req.session.user_id });
+    try{
+      const user = await User.findById(req.session.user_id).select("-password");
+      return res.json({
+        user:{
+          name:user.name,
+          email:user.email,
+        }
+      });
+    }catch(error){
+      return res.json({ user: null });
+    }
   }
-  return res.json({ user_id: null });
+  return res.json({ user: null });
 });
 
 // 1-> signup route at : POST /api/auth/signup
@@ -51,7 +61,7 @@ router.post("/signup", async (req, res) => {
       phoneNumber,
     });
 
-    const savedUserData = await user.save();
+    await user.save();
 
 
     return res.status(201).json({
@@ -67,7 +77,90 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-//2--> verify otp at : GET /api/auth/verify-otp
+
+//2-> signin route at : POST /api/auth/signin
+
+router.post("/signin", async (req, res) => {
+  try {
+    //client input validation
+    const { error, value } = signinValidator.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        msg: "Login validation failed",
+        error: error.details[0].message,
+      });
+    }
+
+    const { email, password,phoneNumber } = value;
+
+    if(phoneNumber!==process.env.VERIFIED_PHONE_NUMBER){//this is personal number for testing
+      return res.status(422).json({
+        success:false,
+        msg:"OTP verification is not available for free tier users"
+      })
+    }
+    const userData = await User.findOne({ email });
+    
+    //case: email is wrong ie not registered email
+    if (!userData) {
+      return res.status(422).json({
+        success: false,
+        msg: "Invalid email or password",
+      });
+    }
+
+
+    //case : phone number not registered
+
+    if(userData.phoneNumber!==phoneNumber){
+      return res.status(422)
+      .json({success:false,msg:"Phone number is not registered with this user!"})
+    }
+    
+
+    // password match
+
+    const isMatch = await matchPassword({
+      enteredPassword: password,
+      actualPassword: userData.password,
+    });
+
+    if (!isMatch) {
+      return res.status(422).json({
+        success: false,
+        msg: "Invalid email or password",
+      });
+    }
+
+
+    //case : user entered all details correctly and now send otp
+    const otp=await sendOtp({phoneNumber});
+
+
+    //creat user session
+    req.session.user_id=userData._id;
+    
+    //create otp session
+    req.session.otp=otp;
+    req.session.otpExpiry=Date.now()+1000*60*2;//2 min
+
+
+    return res.status(200).json({
+      success: true,
+      msg: "OTP sent successfully to your entered phone number!",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      msg: "Internal server error",
+    });
+  }
+});
+
+//3--> verify otp at : GET /api/auth/verify-otp
 
 
 router.post("/verify-otp", async (req, res) => {
@@ -132,87 +225,7 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
-//3-> signin route at : POST /api/auth/signin
 
-router.post("/signin", async (req, res) => {
-  try {
-    //client input validation
-    const { error, value } = signinValidator.validate(req.body);
-
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        msg: "Login validation failed",
-        error: error.details[0].message,
-      });
-    }
-
-    const { email, password,phoneNumber } = value;
-
-    if(phoneNumber!==process.env.VERIFIED_PHONE_NUMBER){
-      return res.status(422).json({
-        success:false,
-        msg:"OTP verification is not available for free tier users"
-      })
-    }
-    const userData = await User.findOne({ email });
-    
-    //case: email is wrong ie not registered email
-    if (!userData) {
-      return res.status(422).json({
-        success: false,
-        msg: "Invalid email or password",
-      });
-    }
-
-
-    //case : phone number not registered
-
-    if(userData.phoneNumber!==phoneNumber){
-      return res.status(422)
-      .json({success:false,msg:"Phone number is not registered with this user!"})
-    }
-    
-
-    // password match
-
-    const isMatch = await matchPassword({
-      enteredPassword: password,
-      actualPassword: userData.password,
-    });
-
-    if (!isMatch) {
-      return res.status(422).json({
-        success: false,
-        msg: "Invalid email or password",
-      });
-    }
-
-
-    //case : user entered all details correctly and now send otp
-    const otp=await sendOtp({phoneNumber});
-
-
-    //creat user session
-    req.session.user_id=userData._id;
-    
-    //create otp session
-    req.session.otp=otp;
-    req.session.otpExpiry=Date.now()+1000*60*2;//2 min
-
-
-    return res.status(200).json({
-      success: true,
-      msg: "OTP sent successfully to your entered phone number!",
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      msg: "Internal server error",
-    });
-  }
-});
 
 
 //6->  logout user at : POST /api/logout
