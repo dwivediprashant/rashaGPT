@@ -5,7 +5,7 @@ import apiClient from "../config/apiClient";
 
 
 export default function AuthProvider({ children }) {
-  const [userId, setuserId] = useState(null);
+  const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
   //check session
@@ -16,13 +16,13 @@ export default function AuthProvider({ children }) {
         method: "GET",
         url: "/api/auth/me"
       })
-      if (res.data.user_id) {
-        setuserId(res.data.user_id)
+      if (res.data.user) {
+        setUser(res.data.user)
       } else {
-        setuserId(null)
+        setUser(null)
       }
     } catch (error) {
-      setuserId(null)
+      setUser(null)
     } finally {
       setAuthLoading(false)
     }
@@ -35,7 +35,7 @@ export default function AuthProvider({ children }) {
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
-          setuserId(null);
+          setUser(null);
           setAuthLoading(false);
           window.location.href = "/login";
         }
@@ -44,15 +44,15 @@ export default function AuthProvider({ children }) {
     );
 
     //intila session check
-    if (!userId) {
-      checkSession()
+    if (!user) {
+      checkSession();
     }
 
 
     return () => {
       apiClient.interceptors.response.eject(interceptor);
     };
-  }, [userId]);
+  }, [user]);
 
 
 
@@ -67,7 +67,7 @@ export default function AuthProvider({ children }) {
     } catch (error) {
       console.log("Logout failed \n" + error);
     } finally {
-      setuserId(null);
+      setUser(null);
       setAuthLoading(false);
     }
   }
@@ -108,7 +108,7 @@ export default function AuthProvider({ children }) {
         }
       })
       if (res.data?.success) {
-        setuserId(res.data.userId);
+        setUser(res.data.user);
         return { success: true };
       }
       return { success: false };
@@ -120,11 +120,13 @@ export default function AuthProvider({ children }) {
   }
   //all vals
   const values = {
+    user,
+    setUser,
     authLoading,
     setAuthLoading,
     login,
     verifyOtp,
-    isAuthenticated: userId ? true : false,
+    isAuthenticated: user ? true : false,
     logout
   }
   return (

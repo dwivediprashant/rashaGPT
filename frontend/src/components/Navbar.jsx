@@ -1,24 +1,31 @@
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import "./Navbar.css";
-import { useContext } from "react";
+import { useState } from "react";
+import ProfileModal from "./utils/profileModal";
 import AuthContext from "../context/AuthContext";
+import { useContext } from "react";
+import { Link } from "react-router";
 export default function Navbar() {
 
-  const {isAuthenticated,logout}=useContext(AuthContext)
+  const { isAuthenticated } = useContext(AuthContext);
+  const [profileModal, setProfileModal] = useState(false);
   const navigate = useNavigate();
+
 
   const handleClick = () => {
     navigate("/");
   };
 
 
-  const handleLogout=async()=>{
-    await logout();
-    navigate("/login");
+
+  // profile modal
+  const handleProfileClick = () => {
+    setProfileModal(!profileModal);
   }
 
+
   return (
-    <>
+    <div className="relative">
       <div className="navbar flex place-content-between pt-1">
         <div
           className="logo ml-8 text-2xl flex place-items-center"
@@ -27,23 +34,26 @@ export default function Navbar() {
           <span className="text-white">rasha-</span>
           <span className="text-white font-bold">GPT</span>
         </div>
-        <div className="flex justify-start  m-3">
+        <div className="flex justify-start items-center m-3">
           <a
             href="https://github.com/dwivediprashant/rashaGPT"
             target="_blank"
             rel="noopener noreferrer"
+            className="flex items-center mr-8"
           >
-            <i className="fa-brands fa-github text-white text-xl mr-8"></i>
+            <i className="fa-brands fa-github text-white text-xl"></i>
           </a>
 
-          {/* <i className="fa-solid fa-arrow-right-from-bracket text-white text-xl mr-8"></i> */}
-          {isAuthenticated ? <button onClick={handleLogout} className="text-white mr-8 hover:text-green-600">
-            Logout{" "}
-          </button>: <Link to="/login" className="text-white mr-8 hover:text-green-600">
-            Login{" "}
+          {!isAuthenticated && <Link to="/login" className="text-white mr-8 hover:text-green-600">
+            <span>Login</span>
           </Link>}
+          {isAuthenticated && <button className="profile-btn  mr-8" onClick={handleProfileClick}>
+            <i className={`fa-solid fa-user text-lg ${profileModal ? 'text-green-500' : "text-white"}`}></i>
+          </button>}
+
         </div>
       </div>
-    </>
+      {isAuthenticated && profileModal && <ProfileModal />}
+    </div>
   );
 }
