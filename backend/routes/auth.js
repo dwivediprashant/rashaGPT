@@ -230,9 +230,6 @@ router.post("/verify-otp", async (req, res) => {
 
 //6->  logout user at : POST /api/logout
 router.post("/logout", async (req, res) => {
-  const user=await User.findById(req.session.user_id);
-
-  await user.save();
   req.session.destroy((err) => {
     if (err) return res.status(500).json({ success: false });
     res.clearCookie("connect.sid");
