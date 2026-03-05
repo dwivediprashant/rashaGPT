@@ -41,14 +41,14 @@ export default function Navbar() {
             rel="noopener noreferrer"
             className="flex items-center mr-8"
           >
-            <i className="fa-brands fa-github text-white text-xl"></i>
+            <i className="fa-brands fa-github text-white text-xl"></i> <span className="text-white text-sm ml-1  underline  hover:text-green-600">Documentation</span>
           </a>
 
           {!isAuthenticated && <Link to="/login" className="text-white mr-8 hover:text-green-600">
             <span>Login</span>
           </Link>}
           {isAuthenticated && <button className="profile-btn  mr-8" onClick={handleProfileClick}>
-            <i className={`fa-solid fa-user text-lg ${profileModal ? 'text-green-500' : "text-white"}`}></i>
+            <i className={`fa-solid fa-user text-lg hover:text-green-500 ${profileModal ? 'text-green-500' : "text-white"}`}></i>
           </button>}
 
         </div>

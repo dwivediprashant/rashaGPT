@@ -19,3 +19,7 @@ button {
 .new-chat {
   background-color: #51f3519d;
 }
+
+.new-chat:hover{
+  background-color: #51f35175;
+}

@@ -16,11 +16,8 @@ export default function AuthProvider({ children }) {
         method: "GET",
         url: "/api/auth/me"
       })
-      if (res.data.user) {
-        setUser(res.data.user)
-      } else {
-        setUser(null)
-      }
+
+      setUser(res.data.user || null);
     } catch (error) {
       setUser(null)
     } finally {
@@ -28,8 +25,14 @@ export default function AuthProvider({ children }) {
     }
   }
 
-  //401 : session expired
+  //401 handling
   useEffect(() => {
+
+    //initial session check + on page refresh 
+    if (!user) {
+      checkSession();
+    }
+
     // Setup 401 interceptor
     const interceptor = apiClient.interceptors.response.use(
       (response) => response,
@@ -42,11 +45,6 @@ export default function AuthProvider({ children }) {
         return Promise.reject(error);
       }
     );
-
-    //intila session check
-    if (!user) {
-      checkSession();
-    }
 
 
     return () => {
@@ -126,7 +124,7 @@ export default function AuthProvider({ children }) {
     setAuthLoading,
     login,
     verifyOtp,
-    isAuthenticated: user ? true : false,
+    isAuthenticated: !!user,
     logout
   }
   return (

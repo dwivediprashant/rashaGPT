@@ -1,19 +1,16 @@
 
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Notice from "./utils/Notice";
 import Loader7 from "./Loaders/Loader7";
 import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
 export default function Login() {
-  const { isAuthenticated, login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const userId = state?.userId;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -24,13 +21,12 @@ export default function Login() {
       return;
     }
     e.preventDefault();
-    setIsOtpSent(false);
+
     setErrorMsg("");
     setIsLoading(true);
     try {
-      const response = await login({ email: email.trim(), password, phoneNumber })
+      await login({ email: email.trim(), password, phoneNumber })
 
-      setIsOtpSent(true);
 
       navigate("/verify-otp", { state: { email, password, phoneNumber } });
 

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router";
 import apiClient from "../config/apiClient";
 import Notice from "./utils/Notice";
-import OtpSuccess from "./utils/OtpSuccess";
 import Loader7 from "./Loaders/Loader7";
 import { useNavigate } from "react-router";
 export default function Register() {
