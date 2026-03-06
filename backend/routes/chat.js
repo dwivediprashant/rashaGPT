@@ -87,7 +87,7 @@ router.delete("/chats/:chatId", async (req, res) => {
 
 //4-> start messaging and get response from assistant inside particular chat : POST api/chat/:chatId
 router.post("/chats/:chatId", async (req, res) => {
-  const { message } = req.body;
+  const { message,model="llama-3.3-70b-versatile" } = req.body;
   const { chatId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(chatId)) {
     return res.status(404).json({ success: false, msg: "Chat not found !" });
@@ -110,7 +110,7 @@ router.post("/chats/:chatId", async (req, res) => {
       role: "user",
     });
     //get reply of user message from Assistant (groq model)
-    const replyFromAssistant = await getGroqAPIResponse(message);
+    const replyFromAssistant = await getGroqAPIResponse({message,model});
     const assistantMessage = new Message({
       content: replyFromAssistant,
       belongToChatId: chatId,

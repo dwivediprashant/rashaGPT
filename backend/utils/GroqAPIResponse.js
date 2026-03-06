@@ -1,5 +1,5 @@
 import axios from "axios";
-const getGroqAPIResponse = async (message) => {
+const getGroqAPIResponse = async ({message,model}) => {
   try {
     const result = await axios({
       method: "POST",
@@ -9,7 +9,7 @@ const getGroqAPIResponse = async (message) => {
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
       data: {
-        model: "llama-3.3-70b-versatile",
+        model,
         messages: [
           {
             role: "user",
