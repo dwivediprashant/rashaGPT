@@ -50,11 +50,13 @@ export default function ChatInput() {
   }
 
 
+
+
   return (
-    <>
+    <div className="mb-16 flex justify-center items-center">
 
 
-      <div className="mb-5 sticky overflow-visible w-[75vw] place-content-center place-items-center bottom-3 mr-12 bg-neutral-950 p-4 backdrop-blur rounded-2xl">
+      <div className="flex flex-col justify-center items-center  sticky overflow-visible w-[60vw] place-content-center place-items-center bottom-3  bg-neutral-950 p-4 backdrop-blur rounded-2xl">
 
         <div className="flex-col items-center justify-center gap-3 w-[100%]">
           <>
@@ -64,7 +66,7 @@ export default function ChatInput() {
               onSubmit={getReply}
             >
               <div className="relative bg-green-800">
-                {showModels && <ModelsModal setSelectedModel={setSelectedModel} />}
+                {showModels && <ModelsModal setSelectedModel={setSelectedModel} setShowModels={setShowModels} selectedModel={selectedModel} />}
               </div>
               <button type="button" onClick={handleShowModelCLick}>
                 <i className="fa-solid fa-plus text-xl hover:text-gray-400"></i>
@@ -97,7 +99,7 @@ export default function ChatInput() {
           </div>
         </div>
       </div>
-    </>
+    </div>
 
   );
 }
