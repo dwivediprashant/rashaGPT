@@ -10,7 +10,7 @@ export default function VerifyOtp() {
   const { email, password, phoneNumber } = useLocation().state || { email: "", password: "", phoneNumber: "" };
   const { login, verifyOtp } = useContext(AuthContext);
   const [enteredOtp, setEnteredOtp] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [notice, setNotice] = useState({ msg: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ export default function VerifyOtp() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
+    setNotice({ msg: "", type: "" });
     setIsLoading(true);
     try {
 
@@ -45,13 +45,13 @@ export default function VerifyOtp() {
       if (res.success) {
         await navigateToNewChat();
       } else {
-        setErrorMsg("OTP verification failed");
+        setNotice({ msg: "OTP verification failed", type: "error" });
       }
 
     } catch (error) {
       const backendError =
         error?.response?.data?.error || error?.response?.data?.msg;
-      setErrorMsg(backendError);
+      setNotice({ msg: backendError, type: "error" });
 
     } finally {
       setIsLoading(false);
@@ -63,21 +63,20 @@ export default function VerifyOtp() {
   //resend otp
   const resendOtp = async ({ email, password, phoneNumber }) => {
     if (!email || !phoneNumber || !password) {
-      setErrorMsg("You refreshed the page. Please login again.");
+      setNotice({ msg: "Required fields are missing. Please login with valid credentials again!", type: "error" });
       return;
     }
 
     try {
-      // Call login to trigger OTP sending
       const res = await login({ email, password, phoneNumber });
 
       if (res.data?.success) {
-        setErrorMsg("OTP resent successfully!");
-        // Optional: Clear error after 3 seconds
-        setTimeout(() => setErrorMsg(""), 3000);
+        setNotice({ msg: "OTP resent successfully!", type: "success" });
+
+        setTimeout(() => setNotice({ msg: "", type: "" }), 3000);
       }
     } catch (error) {
-      setErrorMsg("Failed to resend OTP");
+      setNotice({ msg: "Failed to resend OTP", type: "error" });
     }
   };
   return (
@@ -109,7 +108,7 @@ export default function VerifyOtp() {
           </label>
 
 
-          {errorMsg && <Notice msg={errorMsg} />}
+          {notice.msg.length > 0 && <Notice msg={notice.msg} type={notice.type} />}
 
           <button
             type="submit"

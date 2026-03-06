@@ -65,6 +65,7 @@ export default function AuthProvider({ children }) {
     } catch (error) {
       console.log("Logout failed \n" + error);
     } finally {
+      localStorage.setItem("selectedModel", "");
       setUser(null);
       setAuthLoading(false);
     }
