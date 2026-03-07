@@ -1,16 +1,16 @@
 import apiClient from "../config/apiClient";
 import { useLocation, useNavigate } from "react-router";
 import { useState } from "react";
-import Notice from "./utils/Notice";
 import Loader7 from "./Loaders/Loader7";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
+import MainContext from "../context/MainContext";
 export default function VerifyOtp() {
 
-  const { email, password, phoneNumber } = useLocation().state || { email: "", password: "", phoneNumber: "" };
+  const { email, password, phoneNumber, userName } = useLocation().state || { email: "", password: "", phoneNumber: "", userName: "" };
   const { login, verifyOtp } = useContext(AuthContext);
+  const { showNotice } = useContext(MainContext);
   const [enteredOtp, setEnteredOtp] = useState("");
-  const [notice, setNotice] = useState({ msg: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -22,9 +22,11 @@ export default function VerifyOtp() {
         url: "/api/chats",
       });
       const chatId = res.data.savedChat._id;
+      showNotice({ msg: `Welcome ${userName} !`, type: "success" });
       navigate(`/chat/${chatId}`);
     } catch (error) {
       console.log(error);
+      showNotice({ msg: "Failed to create chat", type: "error" });
       throw error;
     }
   };
@@ -33,7 +35,6 @@ export default function VerifyOtp() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setNotice({ msg: "", type: "" });
     setIsLoading(true);
     try {
 
@@ -45,13 +46,13 @@ export default function VerifyOtp() {
       if (res.success) {
         await navigateToNewChat();
       } else {
-        setNotice({ msg: "OTP verification failed", type: "error" });
+        showNotice({ msg: "OTP verification failed", type: "error" });
       }
 
     } catch (error) {
       const backendError =
         error?.response?.data?.error || error?.response?.data?.msg;
-      setNotice({ msg: backendError, type: "error" });
+      showNotice({ msg: backendError, type: "error" });
 
     } finally {
       setIsLoading(false);
@@ -63,7 +64,7 @@ export default function VerifyOtp() {
   //resend otp
   const resendOtp = async ({ email, password, phoneNumber }) => {
     if (!email || !phoneNumber || !password) {
-      setNotice({ msg: "Required fields are missing. Please login with valid credentials again!", type: "error" });
+      showNotice({ msg: "Required fields are missing. Please login with valid credentials again!", type: "error" });
       return;
     }
 
@@ -71,12 +72,12 @@ export default function VerifyOtp() {
       const res = await login({ email, password, phoneNumber });
 
       if (res.data?.success) {
-        setNotice({ msg: "OTP resent successfully!", type: "success" });
+        showNotice({ msg: "OTP resent successfully!", type: "success" });
 
-        setTimeout(() => setNotice({ msg: "", type: "" }), 3000);
+        setTimeout(() => showNotice({ msg: "", type: "" }), 3000);
       }
     } catch (error) {
-      setNotice({ msg: "Failed to resend OTP", type: "error" });
+      showNotice({ msg: "Failed to resend OTP", type: "error" });
     }
   };
   return (
@@ -106,9 +107,6 @@ export default function VerifyOtp() {
               className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center text-2xl tracking-[0.5em] text-white placeholder-white/20 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
             />
           </label>
-
-
-          {notice.msg.length > 0 && <Notice msg={notice.msg} type={notice.type} />}
 
           <button
             type="submit"

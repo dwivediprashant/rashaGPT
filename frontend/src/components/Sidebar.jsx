@@ -2,7 +2,7 @@ import "./Sidebar.css";
 import Chat from "./Chat.jsx";
 import { useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
-import { MainContext } from "../context/MainContext.jsx";
+import MainContext from "../context/MainContext.jsx";
 import apiClient from "../config/apiClient";
 export default function Sidebar() {
   const { allChats, setAllChats } = useContext(MainContext);

@@ -2,15 +2,21 @@
 import { useContext } from 'react';
 import AuthContext from '../../context/AuthContext';
 import { useNavigate } from 'react-router';
+import MainContext from '../../context/MainContext';
 
 export default function ProfileModal() {
 
-
+    const { showNotice } = useContext(MainContext);
     const { logout, user } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleLogout = async () => {
+        const confirm = window.confirm("Are you sure to logout?");
+        if (!confirm) return;
+
         await logout();
+
+        showNotice({ msg: "Logged out successfully !", type: "success" });
         navigate("/login");
     }
 

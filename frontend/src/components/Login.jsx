@@ -1,12 +1,15 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import Notice from "./utils/Notice";
+import { Link, useLocation, useNavigate } from "react-router";
+import SimpleNotice from "./utils/SimpleNotice";
 import Loader7 from "./Loaders/Loader7";
 import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
+import MainContext from "../context/MainContext";
 export default function Login() {
+  const { userName } = useLocation().state || { username: "" };
   const { login } = useContext(AuthContext);
+  const { showNotice } = useContext(MainContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,8 +30,9 @@ export default function Login() {
     try {
       await login({ email: email.trim(), password, phoneNumber })
 
+      showNotice({ msg: "OTP sent successfully !", type: "success" });
+      navigate("/verify-otp", { state: { email, password, phoneNumber, userName } });
 
-      navigate("/verify-otp", { state: { email, password, phoneNumber } });
 
     } catch (error) {
       const backendError =
@@ -42,7 +46,7 @@ export default function Login() {
   return (
     <section className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
-        {errorMsg && <Notice msg={errorMsg} />}
+        {errorMsg && <SimpleNotice msg={errorMsg} type="error" />}
         <form className="mt-8 space-y-6" onSubmit={handleLoginSubmit}>
           <label className="block text-sm font-medium text-white/70">
             Email

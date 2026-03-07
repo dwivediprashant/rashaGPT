@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import apiClient from "../config/apiClient";
-import Notice from "./utils/Notice";
+import SimpleNotice from "./utils/SimpleNotice";
 import Loader7 from "./Loaders/Loader7";
 import { useNavigate } from "react-router";
+import MainContext from "../context/MainContext";
+import { useContext } from "react";
 export default function Register() {
 
   const navigate = useNavigate();
+  const { showNotice } = useContext(MainContext);
 
   const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState("");
@@ -36,13 +39,12 @@ export default function Register() {
       });
       console.log(res.data);
       if (res.data?.success === true) {
-
-        navigate("/login");
+        showNotice({ msg: "Account created successfully. Now you can login !", type: "success" });
+        navigate("/login", { state: { userName } });
       }
     } catch (error) {
       const backendError =
         error?.response?.data?.error || error?.response?.data?.msg;
-
       setErrorMsg(backendError);
     } finally {
       setIsLoading(false);
@@ -51,7 +53,7 @@ export default function Register() {
   return (
     <section className="flex  min-h-screen items-center justify-center px-4 py-5">
       <div className="w-full  max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
-        {errorMsg && <Notice msg={errorMsg} />}
+        {errorMsg && <SimpleNotice msg={errorMsg} type="error" />}
         <form className="mt-8 space-y-3" onSubmit={handleFormSubmit}>
           <label className="block text-sm font-medium text-white">
             Username

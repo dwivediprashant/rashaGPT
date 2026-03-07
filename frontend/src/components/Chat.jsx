@@ -2,12 +2,12 @@ import { useLocation, useNavigate } from "react-router";
 import "./Chat.css";
 import apiClient from "../config/apiClient";
 import { useContext } from "react";
-import { MainContext } from "../context/MainContext";
+import MainContext from "../context/MainContext";
 import { useState } from "react";
 export default function Chat({ chat }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setAllChats } = useContext(MainContext);
+  const { setAllChats, showNotice } = useContext(MainContext);
   const [chatTitle, setChatTitle] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   //get all messages from particular chat
@@ -18,13 +18,26 @@ export default function Chat({ chat }) {
     });
     navigate(`/chat/${chat._id}`);
   };
+
+  //delete chat
   const handleDeleteClick = async (e) => {
     e.preventDefault();
-    const res = await apiClient({
-      method: "DELETE",
-      url: `/api/chats/${chat._id}`,
-    });
-    setAllChats((prev) => prev.filter((c) => c._id !== chat._id));
+    //confirmation to delete chat
+    const confirmed = window.confirm("Are you sure to delete this chat? Once you delete the char you can not recover it.");
+    if (!confirmed) return;
+
+    try {
+      const res = await apiClient({
+        method: "DELETE",
+        url: `/api/chats/${chat._id}`,
+      });
+      //confirmation of deleted chat
+      showNotice({ msg: "Chat deleted successfully", type: "success" });
+      setAllChats((prev) => prev.filter((c) => c._id !== chat._id));
+    } catch (error) {
+      console.log(error);
+      showNotice({ msg: "Failed to delete chat", type: "error" });
+    }
   };
 
   const handleEditClick = async (e) => {
@@ -35,13 +48,15 @@ export default function Chat({ chat }) {
   const submitTitle = async (e) => {
     e.preventDefault();
     try {
-      if (chatTitle.length <= 1) {
+      if (chatTitle.trim().length <= 0 || chatTitle.trim().length > 10) {
+        showNotice({ msg: "Chat title must be in between 1 and 10 characters", type: "warning" });
+        return;
       }
       const res = await apiClient({
         method: "PATCH",
         url: `/api/chats/${chat._id}`,
         data: {
-          title: chatTitle.trim().length > 0 ? chatTitle.trim() : "New chat",
+          title: chatTitle.trim(),
         },
       });
       const { updatedChat } = res.data;
@@ -52,8 +67,11 @@ export default function Chat({ chat }) {
       );
       setIsOpen(false);
       setChatTitle("");
+      showNotice({ msg: "Chat title updated successfully", type: "success" });
+
     } catch (error) {
       console.log(error);
+      showNotice({ msg: "Failed to update chat title", type: "error" });
     }
   };
 
@@ -63,18 +81,13 @@ export default function Chat({ chat }) {
     >
       <div className="flex-col place-items-center place-content-between">
         <div className="flex px-4">
-          <div onClick={handleClick} className="whitespace-nowrap">
+          <div onClick={handleClick} className="whitespace-nowrap mr-4">
             {chat.title}
           </div>
 
           {location.pathname !== `/chat/${chat._id}` && (
             <div className="flex px-3 ml-2">
-              <button onClick={handleEditClick} className="edit-btn mr-2">
-                <i
-                  className="fa-solid fa-pen-to-square text-white text-sm hover:text-blue-600"
-                  title="Rename chat"
-                ></i>
-              </button>
+
               <button onClick={handleDeleteClick} className="del-btn">
                 <i
                   className="fa-solid fa-trash text-white text-xs hover:text-red-600"
@@ -83,6 +96,12 @@ export default function Chat({ chat }) {
               </button>
             </div>
           )}
+          <button onClick={handleEditClick} className="edit-btn">
+            <i
+              className="fa-solid fa-pen-to-square text-white text-sm hover:text-blue-600"
+              title="Rename chat"
+            ></i>
+          </button>
         </div>
         <div>
           {isOpen && (
@@ -92,7 +111,6 @@ export default function Chat({ chat }) {
                   type="text"
                   className="outline-none text-white px-1 border-1 rounded-md "
                   value={chatTitle}
-                  maxLength={10}
                   onChange={(e) => setChatTitle(e.target.value)}
                 />
                 <button className="rounded-sm mb-2 bg-green-500 w-[50%] translate-x-[50%] mt-3 text-white">

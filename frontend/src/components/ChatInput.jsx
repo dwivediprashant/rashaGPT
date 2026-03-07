@@ -1,4 +1,4 @@
-import { MainContext } from "../context/MainContext";
+import MainContext from "../context/MainContext";
 import { useContext, useEffect, useState } from "react";
 import "./ChatInput.css";
 import { useParams } from "react-router";

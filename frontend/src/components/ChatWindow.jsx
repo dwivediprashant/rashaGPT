@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import ChatInput from "./ChatInput";
-import { MainContext } from "../context/MainContext";
+import MainContext from "../context/MainContext";
 import "./ChatWindow.css";
 import Sidebar from "./Sidebar";
 import { useParams } from "react-router";
