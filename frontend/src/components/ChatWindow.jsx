@@ -10,7 +10,7 @@ import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Loader6 from "./Loaders/Loader6"
-import Loader8 from "./Loaders/Loader8"
+
 import apiClient from "../config/apiClient";
 export default function ChatWindow() {
   const { chatId } = useParams();
@@ -60,6 +60,7 @@ export default function ChatWindow() {
               <WelcomeMsg />
             </div>
           ) : (
+
             <div className=" flex flex-col gap-4 pb-8">
               {allMessages.map((msg, idx) =>
                 msg.role === "user" ? (
@@ -81,11 +82,9 @@ export default function ChatWindow() {
             </div>
           )}
 
-          {isReplying && (<div className="chat-msg assistant-msg">
-            <Loader8 />
-          </div>)}
+
         </div>
-        <ChatInput />
+        <ChatInput isReplying={isReplying} />
       </div>
     </div>
   );

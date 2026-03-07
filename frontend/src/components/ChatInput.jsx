@@ -4,8 +4,10 @@ import "./ChatInput.css";
 import { useParams } from "react-router";
 import apiClient from "../config/apiClient";
 import ModelsModal from "./utils/ModelsModal";
+import SpeechRecognize from "./utils/speechRecognize";
+import Loader8 from "./Loaders/Loader8"
 
-export default function ChatInput() {
+export default function ChatInput({ isReplying }) {
   const { chatId } = useParams();
   const { prompt, setPrompt, setReply } = useContext(MainContext);
   const [showModels, setShowModels] = useState(false);
@@ -69,7 +71,7 @@ export default function ChatInput() {
                 {showModels && <ModelsModal setSelectedModel={setSelectedModel} setShowModels={setShowModels} selectedModel={selectedModel} />}
               </div>
               <button type="button" onClick={handleShowModelCLick}>
-                <i className="fa-solid fa-plus text-xl hover:text-gray-400"></i>
+                <i className="fa-solid fa-plus text-lg hover:text-gray-400"></i>
               </button>
 
               <div className="flex flex-col justify-center items-start w-[100%] ">
@@ -82,16 +84,28 @@ export default function ChatInput() {
 
 
               </div>
+
+
+              <div className="flex justify-center items-center gap-3">
+                <SpeechRecognize setPrompt={setPrompt} getReply={getReply} isReplying={isReplying} />
+              </div>
+
               <button
                 type="submit"
-
+                disabled={isReplying}
               >
-                <i className="fa-solid fa-paper-plane text-xl hover:text-gray-400"></i>
+                {isReplying ? (
+                  <Loader8 />
+                ) : (
+                  <i className="fa-solid fa-paper-plane text-lg hover:text-gray-400"></i>
+                )}
               </button>
+
             </form>
             <div className="text-xs text-center ml-16 flex rounded-4xl bg-neutral-800 mt-2  w-[max-content] pt-1 pb-1 pl-2 pr-2" title="Selected Model">
               {selectedModel}
             </div>
+
           </>
           <div className="text-center p-3 claim-msg text-xs">
             rasha-GPT can make mistakes. Please verify the given
