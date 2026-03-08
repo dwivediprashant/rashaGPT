@@ -1,6 +1,3 @@
-.chat {
-  cursor: pointer;
-}
 .chat:hover {
   background-color: #212121;
   border-radius: 14px;
@@ -9,13 +6,4 @@
   background-color: #212121;
   border-radius: 14px;
   color: #51f3519d;
-}
-.dropdown {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  top: 200%;
-  right: 0;
-  left: 50%;
-  transform: translate(-50%);
 }

@@ -5,6 +5,9 @@ import { useContext, useEffect, useState } from "react";
 import MainContext from "../context/MainContext.jsx";
 import apiClient from "../config/apiClient";
 export default function Sidebar() {
+
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { allChats, setAllChats } = useContext(MainContext);
   const navigate = useNavigate();
 
@@ -39,10 +42,32 @@ export default function Sidebar() {
           New Chat <i className="fa-solid fa-plus"></i>
         </button>
         <div className="m-3 ">
-          <p className="text-gray-500">My Chats</p>
+          <p className="text-gray-500">My Chats {`(${allChats.length})`}</p>
         </div>
+        {/** Search filter functionality */}
+        <div className="flex justify-start items-center  mb-4">
+          <input
+            type="text"
+            placeholder="Search chats by title"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-neutral-800 text-sm  rounded-lg px-2 py-1 focus:outline-none focus:ring-0"
+          />
+          {/* <i className="fa-solid fa-magnifying-glass text-sm ml-1"></i> */}
+        </div>
+
         <ul className="all-chat-list pb-20">
-          {allChats.map((chat, idx) => (
+          {searchQuery ? allChats.filter((chat) => {
+            return chat.title.toLowerCase().includes(searchQuery.toLowerCase());
+          }).length === 0 ? (
+            <div className="text-center p-3 text-gray-500 text-lg">
+              <span>No chats found !</span><i className="fa-solid fa-face-meh fa-shake"></i>
+            </div>
+          ) : allChats.filter((chat) => {
+            return chat.title.toLowerCase().includes(searchQuery.toLowerCase());
+          }).map((chat, idx) => (
+            <Chat chat={chat} key={idx} redirectToNewChat={redirectToNewChat} />
+          )) : allChats.map((chat, idx) => (
             <Chat chat={chat} key={idx} redirectToNewChat={redirectToNewChat} />
           ))}
           <div className="text-center p-3 claim-msg text-xs">

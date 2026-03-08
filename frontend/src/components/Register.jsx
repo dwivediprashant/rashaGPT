@@ -53,6 +53,10 @@ export default function Register() {
   return (
     <section className="flex  min-h-screen items-center justify-center px-4 py-5">
       <div className="w-full  max-w-md rounded-3xl  p-10 text-white shadow-[0_20px_60px_rgba(0,0,0,1)]">
+        <div className="my-2 hover:text-green-500 w-[max-content]">
+          <Link to="/"><i className="fa-solid fa-angles-left"></i></Link>
+        </div>
+
         {errorMsg && <SimpleNotice msg={errorMsg} type="error" />}
         <form className="mt-8 space-y-3" onSubmit={handleFormSubmit}>
           <label className="block text-sm font-medium text-white">
