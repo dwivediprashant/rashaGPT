@@ -7,6 +7,7 @@ import express from "express";
 import session from "express-session";
 import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
+import translateRoutes from "./routes/translate.js";
 import cors from "cors";
 import sessionOptions from "./config/session.js";
 import corsOptions from "./config/cors.js";
@@ -23,8 +24,17 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 //routes
+
+//translate routes
+app.use("/api/translate", translateRoutes);
+
+
+//auth routes
 app.use("/api/auth", authRoutes);
+
+//chat routes
 app.use("/api", chatRoutes);
+
 
 
 //No route match

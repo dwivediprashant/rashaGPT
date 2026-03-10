@@ -27,6 +27,16 @@ const messageSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  translation: {
+    lang:{
+      type: String,
+      default:""
+    },
+    text:{
+      type: String,
+      default:""
+    }
+  },
 });
 
 const Message = mongoose.model("Message", messageSchema);

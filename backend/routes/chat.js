@@ -116,6 +116,7 @@ router.post("/chats/:chatId", async (req, res) => {
       belongToChatId: chatId,
       owner: req.session.user_id,
       role: "assistant",
+      translation: "",
     });
     await userMessage.save();
     await assistantMessage.save();
