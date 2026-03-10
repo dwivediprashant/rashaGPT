@@ -38,3 +38,13 @@
   line-height: 1.6;
   white-space: pre-wrap;
 }
+
+.translated-msg{
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: #0f1115;
+  font-size: 0.75rem;
+  text-align: left;
+  font-style: italic;
+}

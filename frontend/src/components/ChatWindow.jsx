@@ -10,6 +10,7 @@ import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Loader6 from "./Loaders/Loader6"
+import TranslateBox from "./TranslateBox";
 
 import apiClient from "../config/apiClient";
 export default function ChatWindow() {
@@ -72,13 +73,30 @@ export default function ChatWindow() {
                 ) : (
                   <div key={idx} className="chat-msg assistant-msg">
 
-                    <Markdown rehypePlugins={[rehypeHighlight]}>
-                      {msg.content}
-                    </Markdown>
+                    <div>
+                      <Markdown rehypePlugins={[rehypeHighlight]}>
+                        {msg.content}
+                      </Markdown>
+
+                      {msg.translation.text && (
+
+
+                        <div className="chat-msg assistant-msg translated-msg">
+                          <span className="text-sm text-gray-400">{msg.translation.lang.toUpperCase()}</span> - {msg.translation.text}
+                        </div>
+
+                      )}
+
+                      <div className="mt-2 text-lg text-white">
+                        <TranslateBox text={msg.content} messageId={msg._id} fetchMsg={fetchMsg} />
+                      </div>
+
+                    </div>
 
                   </div>
                 ),
               )}
+
             </div>
           )}
 
