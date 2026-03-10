@@ -5,11 +5,11 @@ import { useContext } from "react";
 import MainContext from "../context/MainContext";
 import Loader8 from "./Loaders/Loader8";
 
-export default function TranslateBox({ text, messageId, fetchMsg }) {
+export default function TranslateBox({ text, messageId, fetchMsg, isLoading, setIsLoading }) {
 
     const { showNotice } = useContext(MainContext);
     const [selectedLangCode, setSelectedLangCode] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [localIsLoading, setLocalIsLoading] = useState(false);
 
     const handleLangChange = (e) => {
         setSelectedLangCode(e.target.value);
@@ -26,6 +26,7 @@ export default function TranslateBox({ text, messageId, fetchMsg }) {
         }
         try {
             setIsLoading(true);
+            setLocalIsLoading(true);
             const res = await apiClient({
                 method: "POST",
                 url: "/api/translate",
@@ -47,6 +48,7 @@ export default function TranslateBox({ text, messageId, fetchMsg }) {
             showNotice({ msg: "Translation failed", type: "error" });
         } finally {
             setIsLoading(false);
+            setLocalIsLoading(false);
         }
 
 
@@ -57,9 +59,10 @@ export default function TranslateBox({ text, messageId, fetchMsg }) {
 
         <div className="mt-1 flex items-center gap-1">
             <select
-                className="bg-black border border-white/20 rounded px-1 py-0.5 text-xs text-white focus:outline-none"
+                className="bg-black border border-white/20 rounded px-1 py-0.5 text-xs text-white focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 defaultValue=""
                 onChange={handleLangChange}
+                disabled={isLoading}
             >
                 <option value="" disabled>Choose Language</option>
                 <option value="en-US">English (US)</option>
@@ -93,19 +96,20 @@ export default function TranslateBox({ text, messageId, fetchMsg }) {
                 <option value="ne-IN">Nepali (India)</option>
                 <option value="or-IN">Odia (India)</option>
                 <option value="pa-Guru-IN">Punjabi (Gurmukhi, India)</option>
-                <option value="raj-IN">raj (India)</option>
+                <option value="raj-IN">Rajasthani (India)</option>
                 <option value="sa-IN">Sanskrit (India)</option>
-                <option value="sat-Deva-IN">sat (Devanagari, India)</option>
-                <option value="sat-Olck-IN">sat (Ol Chiki, India)</option>
+                <option value="sat-Deva-IN">Santali (Devanagari, India)</option>
+                <option value="sat-Olck-IN">Santali (Ol Chiki, India)</option>
                 <option value="sd-Deva-IN">Sindhi (Devanagari, India)</option>
                 <option value="ta-IN">Tamil (India)</option>
                 <option value="te-IN">Telugu (India)</option>
                 <option value="ur-IN">Urdu (India)</option>
-                <option value="xnr-IN">xnr (India)</option>
+                <option value="xnr-IN">Kangri (India)</option>
             </select>
-            {isLoading ? <Loader8 /> : <button
-                className="whitespace-nowrap bg-green-500 hover:bg-green-600 text-white px-2 py-0.5 rounded text-xs transition-colors"
+            {localIsLoading ? isLoading ? <Loader8 /> : "" : <button
+                className={`${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"} text-white px-2 py-0.5 rounded text-xs transition-colors`}
                 onClick={handleTranslateClick}
+                disabled={isLoading}
             >
                 Translate
             </button>}

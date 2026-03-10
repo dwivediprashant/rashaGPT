@@ -9,16 +9,17 @@ import WelcomeMsg from "./WelcomeMsg";
 import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
-import Loader6 from "./Loaders/Loader6"
+import Loader6 from "./Loaders/Loader6";
 import TranslateBox from "./TranslateBox";
-
 import apiClient from "../config/apiClient";
+
 export default function ChatWindow() {
   const { chatId } = useParams();
-  const { reply } = useContext(MainContext);
+  const { reply, showNotice } = useContext(MainContext);
   const { isAuthenticated, authLoading } = useContext(AuthContext);
   const [isReplying, setIsReplying] = useState(false);
   const [allMessages, setAllMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   //getting all messages
   const fetchMsg = async () => {
@@ -41,14 +42,46 @@ export default function ChatWindow() {
     fetchMsg();
   }, [authLoading, isAuthenticated, reply, chatId]);
 
-
   //scroll to bottom
   useEffect(() => {
-    const messagesContainer = document.querySelector('.message-container');
+    const messagesContainer = document.querySelector(".message-container");
     if (messagesContainer) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   }, [allMessages]);
+
+  //handleTranslationDeleteClick
+
+  const handleTranslationDeleteClick = async ({ messageId }) => {
+
+    const isConfirm = window.confirm("Are you sure you want to delete this translation? This can not be retrieved back.");
+    if (!isConfirm) return;
+
+
+    try {
+      const res = await apiClient({
+        method: "PATCH",
+        url: "api/translate",
+        data: {
+          messageId,
+        },
+      });
+
+
+
+      if (res.data.success === "ok") {
+
+        showNotice({
+          msg: "Translation deleted successfully !",
+          type: "success",
+        });
+        await fetchMsg();
+      }
+    } catch (error) {
+      showNotice({ msg: "Translation deletion failed !", type: "error" });
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex  bg-neutral-950 text-white h-[100vh]">
@@ -61,46 +94,57 @@ export default function ChatWindow() {
               <WelcomeMsg />
             </div>
           ) : (
-
             <div className=" flex flex-col gap-4 pb-8">
               {allMessages.map((msg, idx) =>
                 msg.role === "user" ? (
                   <div className="flex justify-end" key={idx}>
-                    <p className="chat-msg user-msg">
-                      {msg.content}
-                    </p>
+                    <p className="chat-msg user-msg">{msg.content}</p>
                   </div>
                 ) : (
                   <div key={idx} className="chat-msg assistant-msg">
-
                     <div>
                       <Markdown rehypePlugins={[rehypeHighlight]}>
                         {msg.content}
                       </Markdown>
 
                       {msg.translation.text && (
-
-
                         <div className="chat-msg assistant-msg translated-msg">
-                          <span className="text-sm text-gray-400">{msg.translation.lang.toUpperCase()}</span> - {msg.translation.text}
+                          <span className="text-sm text-gray-400">
+                            {msg.translation.lang.toUpperCase()}
+                          </span>{" "}
+                          - {msg.translation.text}
+                          <button
+                            className="text-white text-xs hover:text-red-600 cursor-pointer ms-auto"
+                            onClick={(e) =>
+                              handleTranslationDeleteClick({
+                                messageId: msg._id,
+                              })
+                            }
+                          >
+                            {" "}
+                            <i
+                              className="fa-solid fa-trash "
+                              title="Delete translation"
+                            ></i>
+                          </button>
                         </div>
-
                       )}
 
-                      <div className="mt-2 text-lg text-white">
-                        <TranslateBox text={msg.content} messageId={msg._id} fetchMsg={fetchMsg} />
+                      <div className="mt-2">
+                        <TranslateBox
+                          text={msg.content}
+                          messageId={msg._id}
+                          fetchMsg={fetchMsg}
+                          isLoading={isLoading}
+                          setIsLoading={setIsLoading}
+                        />
                       </div>
-
                     </div>
-
                   </div>
                 ),
               )}
-
             </div>
           )}
-
-
         </div>
         <ChatInput isReplying={isReplying} />
       </div>
