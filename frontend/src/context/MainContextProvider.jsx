@@ -8,11 +8,11 @@ export default function MainContextProvider({ children }) {
     const [allChats, setAllChats] = useState([{}]);
     const [notice, setNotice] = useState({ msg: "", type: "" });
 
-    const showNotice = ({ msg, type }) => {
+    const showNotice = ({ msg, type, duration = 5000 }) => {
         setNotice({ msg, type });
         setTimeout(() => {
             setNotice({ msg: "", type: "" });
-        }, 5000);
+        }, duration);
     };
 
     const vals = {
@@ -28,16 +28,12 @@ export default function MainContextProvider({ children }) {
     return (
         <MainContext.Provider value={vals}>
             {children}
-            {notice.msg.length > 0 &&
+            {notice.msg?.length > 0 &&
                 <div className="fixed top-4 right-4 z-50">
                     <Notice msg={notice.msg} type={notice.type} />
                 </div>
             }
 
-            {/* to be deleted */}
-            {/* <div className="fixed top-4 right-4 z-50 bg-neutral-800 text-white p-4 rounded-lg shadow-lg">
-                <Notice msg="testing notice sdndmnvd ndvnm,dv dnmns " type="error" />
-            </div> */}
         </MainContext.Provider >
     )
 }

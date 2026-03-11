@@ -5,10 +5,10 @@ import AuthProvider from "./context/AuthProvider.jsx";
 import MainContextProvider from "./context/MainContextProvider.jsx";
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-  <AuthProvider>
     <MainContextProvider>
-    <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </MainContextProvider>
-  </AuthProvider>
   </BrowserRouter>,
 );

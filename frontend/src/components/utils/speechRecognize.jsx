@@ -1,19 +1,33 @@
 
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import AudioLoader from "../../components/Loaders/AudioLoader";
 import Loader8 from "../../components/Loaders/Loader8";
+import MainContext from "../../context/MainContext"
 export default function SpeechRecognize({ setPrompt, getReply, isReplying }) {
     const {
         transcript,
         listening,
         resetTranscript,
-        browserSupportsSpeechRecognition
+        browserSupportsSpeechRecognition,
+        isMicrophoneAvailable
     } = useSpeechRecognition();
+
+    const { showNotice } = useContext(MainContext);
 
 
     if (!browserSupportsSpeechRecognition) {
-        return <span className="text-red-600">Your browser doesn't support. Try using Chrome</span>;
+        showNotice({ msg: "Your browser doesn't support. Try using Chrome", type: "error" });
+        return null;
+    }
+
+    const handleMicOpenClick = (e) => {
+        e.preventDefault();
+        if (!isMicrophoneAvailable) {
+            showNotice({ msg: "Microphone is not permitted. Please check your browser settings.", type: "error" });
+            return;
+        }
+        SpeechRecognition.startListening({ continuous: true });
     }
 
     useEffect(() => {
@@ -37,7 +51,7 @@ export default function SpeechRecognize({ setPrompt, getReply, isReplying }) {
                         }}><i className="fa-solid fa-microphone-slash text-lg hover:text-gray-400"></i>
                         </button>
                     </div>
-                    : isReplying ? <Loader8 /> : <button type="button" onClick={() => SpeechRecognition.startListening({ continuous: true })}><i className="fa-solid fa-microphone text-lg hover:text-gray-400"></i></button>}
+                    : isReplying ? <Loader8 /> : <button type="button" onClick={handleMicOpenClick}><i className="fa-solid fa-microphone text-lg hover:text-gray-400"></i></button>}
             </>
 
         </div>

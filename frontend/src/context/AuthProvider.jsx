@@ -2,11 +2,14 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
 import apiClient from "../config/apiClient";
+import MainContext from "./MainContext";
+import { useContext } from "react";
 
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const { showNotice } = useContext(MainContext);
 
   //check session
   const checkSession = async () => {
@@ -40,7 +43,10 @@ export default function AuthProvider({ children }) {
         if (error.response?.status === 401) {
           setUser(null);
           setAuthLoading(false);
-          window.location.href = "/login";
+          showNotice({ msg: "Session expired. Please login again.", type: "warning", duration: 10000 });
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1000);
         }
         return Promise.reject(error);
       }
@@ -108,6 +114,7 @@ export default function AuthProvider({ children }) {
       })
       if (res.data?.success) {
         setUser(res.data.user);
+        showNotice({ msg: `Welcome ${res.data.user.name} !`, type: "success", duration: 3000 });
         return { success: true };
       }
       return { success: false };

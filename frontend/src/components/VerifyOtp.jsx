@@ -22,7 +22,6 @@ export default function VerifyOtp() {
         url: "/api/chats",
       });
       const chatId = res.data.savedChat._id;
-      showNotice({ msg: `Welcome ${userName} !`, type: "success" });
       navigate(`/chat/${chatId}`);
     } catch (error) {
       console.log(error);
