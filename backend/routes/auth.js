@@ -211,7 +211,11 @@ router.post("/verify-otp", async (req, res) => {
     return res.status(200).json({
       success:true,
       msg:"User verified successfully!",
-      userId:userData._id
+      user: {
+        name: userData.name,
+        email: userData.email,
+        _id: userData._id
+      }
     })
 
 
