@@ -39,11 +39,44 @@
   white-space: pre-wrap;
 }
 
-.translated-msg{
+.typing-cursor {
+  display: inline-block;
+  margin-left: 0.1rem;
+  color: #86efac;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.45);
+  animation:
+    typing-cursor-blink 1.05s steps(1, end) infinite,
+    typing-cursor-drift 2.8s ease-in-out infinite;
+}
+
+.translated-msg {
   margin-top: 0.5rem;
   padding: 0.5rem;
   border-radius: 8px;
   background-color: #0f1115;
   font-size: 0.75rem;
   text-align: left;
+}
+
+@keyframes typing-cursor-blink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+
+  49%,
+  100% {
+    opacity: 0.22;
+  }
+}
+
+@keyframes typing-cursor-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-1px);
+  }
 }

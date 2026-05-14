@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ChatInput from "./ChatInput";
 import MainContext from "../context/MainContext";
 import "./ChatWindow.css";
@@ -6,7 +6,10 @@ import Sidebar from "./Sidebar";
 import { useParams } from "react-router";
 import AuthContext from "../context/AuthContext";
 import WelcomeMsg from "./WelcomeMsg";
+//1st markdown typer :(not used for now)
 import Markdown from "react-markdown";
+//2nd : in use
+import MarkdownTyper from "react-markdown-typer";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import Loader6 from "./Loaders/Loader6";
@@ -18,11 +21,15 @@ export default function ChatWindow() {
   const { reply, showNotice } = useContext(MainContext);
   const { isAuthenticated, authLoading } = useContext(AuthContext);
   const [isReplying, setIsReplying] = useState(false);
+  const [isAssistantTyping, setIsAssistantTyping] = useState(false);
   const [allMessages, setAllMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [animatedAssistantMessageId, setAnimatedAssistantMessageId] =
+    useState(null);
+  const hasMountedRef = useRef(false);
 
   //getting all messages
-  const fetchMsg = async () => {
+  const fetchMsg = async ({ animateLatestAssistant = false } = {}) => {
     setIsReplying(true);
     try {
       const res = await apiClient({
@@ -30,7 +37,18 @@ export default function ChatWindow() {
         url: `/api/chats/${chatId}`,
       });
 
-      setAllMessages(res.data.messages);
+      const messages = res.data.messages;
+      setAllMessages(messages);
+
+      if (animateLatestAssistant) {
+        const latestAssistantMessageId = [...messages]
+          .reverse()
+          .find((message) => message.role === "assistant")?._id;
+        setAnimatedAssistantMessageId(latestAssistantMessageId ?? null);
+      } else {
+        setAnimatedAssistantMessageId(null);
+        setIsAssistantTyping(false);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -40,23 +58,37 @@ export default function ChatWindow() {
 
   useEffect(() => {
     fetchMsg();
-  }, [authLoading, isAuthenticated, reply, chatId]);
+  }, [authLoading, isAuthenticated, chatId]);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+
+    if (!reply) return;
+
+    fetchMsg({ animateLatestAssistant: true });
+  }, [reply]);
 
   //scroll to bottom
   useEffect(() => {
     const messagesContainer = document.querySelector(".message-container");
     if (messagesContainer) {
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      messagesContainer.scrollTo({
+        behavior: "smooth",
+        top: messagesContainer.scrollHeight,
+      });
     }
   }, [allMessages]);
 
   //handleTranslationDeleteClick
 
   const handleTranslationDeleteClick = async ({ messageId }) => {
-
-    const isConfirm = window.confirm("Are you sure you want to delete this translation? This can not be retrieved back.");
+    const isConfirm = window.confirm(
+      "Are you sure you want to delete this translation? This can not be retrieved back.",
+    );
     if (!isConfirm) return;
-
 
     try {
       const res = await apiClient({
@@ -67,10 +99,7 @@ export default function ChatWindow() {
         },
       });
 
-
-
       if (res.data.success === "ok") {
-
         showNotice({
           msg: "Translation deleted successfully !",
           type: "success",
@@ -97,15 +126,31 @@ export default function ChatWindow() {
             <div className=" flex flex-col gap-4 pb-8">
               {allMessages.map((msg, idx) =>
                 msg.role === "user" ? (
-                  <div className="flex justify-end" key={idx}>
+                  <div className="flex justify-end" key={msg._id ?? idx}>
                     <p className="chat-msg user-msg">{msg.content}</p>
                   </div>
                 ) : (
-                  <div key={idx} className="chat-msg assistant-msg">
+                  <div key={msg._id ?? idx} className="chat-msg assistant-msg">
                     <div>
-                      <Markdown rehypePlugins={[rehypeHighlight]}>
-                        {msg.content}
-                      </Markdown>
+                      {msg._id === animatedAssistantMessageId ? (
+                        <MarkdownTyper
+                          interval={3}
+                          showCursor={true}
+                          cursor={
+                            <span className="typing-cursor" aria-hidden="true">
+                              |
+                            </span>
+                          }
+                          onStart={() => setIsAssistantTyping(true)}
+                          onEnd={() => setIsAssistantTyping(false)}
+                        >
+                          {msg.content}
+                        </MarkdownTyper>
+                      ) : (
+                        <Markdown rehypePlugins={[rehypeHighlight]}>
+                          {msg.content}
+                        </Markdown>
+                      )}
 
                       {msg.translation.text && (
                         <div className="chat-msg assistant-msg translated-msg">
@@ -146,7 +191,10 @@ export default function ChatWindow() {
             </div>
           )}
         </div>
-        <ChatInput isReplying={isReplying} />
+        <ChatInput
+          isReplying={isReplying}
+          isAssistantTyping={isAssistantTyping}
+        />
       </div>
     </div>
   );

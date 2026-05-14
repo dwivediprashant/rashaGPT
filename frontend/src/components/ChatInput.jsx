@@ -5,9 +5,9 @@ import { useParams } from "react-router";
 import apiClient from "../config/apiClient";
 import ModelsModal from "./utils/ModelsModal";
 import SpeechRecognize from "./utils/speechRecognize";
-import Loader8 from "./Loaders/Loader8"
+import Loader8 from "./Loaders/Loader8";
 
-export default function ChatInput({ isReplying }) {
+export default function ChatInput({ isReplying, isAssistantTyping }) {
   const { chatId } = useParams();
   const { prompt, setPrompt, setReply } = useContext(MainContext);
   const [showModels, setShowModels] = useState(false);
@@ -15,18 +15,14 @@ export default function ChatInput({ isReplying }) {
     return localStorage.getItem("selectedModel") || "llama-3.3-70b-versatile";
   });
 
-  //local storage to save selected model
   useEffect(() => {
     localStorage.setItem("selectedModel", selectedModel);
-  }, [selectedModel])
+  }, [selectedModel]);
 
-  ///------------
   const getReply = async (e) => {
-
     e.preventDefault();
 
     if (!prompt.trim()) return;
-
 
     try {
       const res = await apiClient({
@@ -44,76 +40,67 @@ export default function ChatInput({ isReplying }) {
     }
   };
 
-
-  //models option modal
   const handleShowModelCLick = (e) => {
     e.preventDefault();
     setShowModels(!showModels);
-  }
-
-
-
+  };
 
   return (
     <div className="mb-16 flex justify-center items-center">
+      <div className="flex flex-col justify-center items-center sticky overflow-visible w-[60vw] place-content-center place-items-center bottom-3">
+        <form
+          className={`chat-input-form flex place-content-center place-items-center gap-3 w-[100%] bg-neutral-950 p-4 backdrop-blur rounded-2xl ${isAssistantTyping ? "is-typing-response" : ""}`}
+          onSubmit={getReply}
+        >
+          <div className="relative bg-green-800">
+            {showModels && (
+              <ModelsModal
+                setSelectedModel={setSelectedModel}
+                setShowModels={setShowModels}
+                selectedModel={selectedModel}
+              />
+            )}
+          </div>
+          <button type="button" onClick={handleShowModelCLick}>
+            <i className="fa-solid fa-plus text-lg hover:text-gray-400"></i>
+          </button>
 
+          <div className="flex flex-col justify-center items-start w-[100%] gap-1">
+            <input
+              className="chat-input-field overflow-visible rounded-xl w-[100%] bg-neutral-800 px-4 py-3 text-base text-white placeholder-white/40 shadow-inner focus:outline-none focus:ring-0"
+              placeholder="Message rasha-GPT"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+            />
 
-      <div className="flex flex-col justify-center items-center  sticky overflow-visible w-[60vw] place-content-center place-items-center bottom-3  bg-neutral-950 p-4 backdrop-blur rounded-2xl">
-
-        <div className="flex-col items-center justify-center gap-3 w-[100%]">
-          <>
-
-            <form
-              className="p-2 flex place-content-center place-items-center gap-3 w-[100%]"
-              onSubmit={getReply}
+            <div
+              className="selected-model-chip text-xs flex rounded-4xl bg-neutral-800 w-[max-content] pt-1 pb-1 pl-2 pr-2"
+              title="Selected Model"
             >
-              <div className="relative bg-green-800">
-                {showModels && <ModelsModal setSelectedModel={setSelectedModel} setShowModels={setShowModels} selectedModel={selectedModel} />}
-              </div>
-              <button type="button" onClick={handleShowModelCLick}>
-                <i className="fa-solid fa-plus text-lg hover:text-gray-400"></i>
-              </button>
-
-              <div className="flex flex-col justify-center items-start w-[100%] ">
-                <input
-                  className="overflow-visible rounded-xl w-[100%]  bg-neutral-800 px-4 py-3 text-base text-white placeholder-white/40 shadow-inner focus:outline-none focus:ring-0"
-                  placeholder="Message rasha-GPT"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                />
-
-
-              </div>
-
-
-              <div className="flex justify-center items-center gap-3">
-                <SpeechRecognize setPrompt={setPrompt} getReply={getReply} isReplying={isReplying} />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isReplying}
-              >
-                {isReplying ? (
-                  <Loader8 />
-                ) : (
-                  <i className="fa-solid fa-paper-plane text-lg hover:text-gray-400"></i>
-                )}
-              </button>
-
-            </form>
-            <div className="text-xs text-center ml-16 flex rounded-4xl bg-neutral-800 mt-2  w-[max-content] pt-1 pb-1 pl-2 pr-2" title="Selected Model">
               {selectedModel}
             </div>
-
-          </>
-          <div className="text-center p-3 claim-msg text-xs">
-            rasha-GPT can make mistakes. Please verify the given
-            response.{" "}
           </div>
+
+          <div className="flex justify-center items-center gap-3">
+            <SpeechRecognize
+              setPrompt={setPrompt}
+              getReply={getReply}
+              isReplying={isReplying}
+            />
+          </div>
+
+          <button type="submit" disabled={isReplying}>
+            {isReplying ? (
+              <Loader8 />
+            ) : (
+              <i className="fa-solid fa-paper-plane text-lg hover:text-gray-400"></i>
+            )}
+          </button>
+        </form>
+        <div className="text-center p-3 claim-msg text-xs">
+          rasha-GPT can make mistakes. Please verify the given response.
         </div>
       </div>
     </div>
-
   );
 }
