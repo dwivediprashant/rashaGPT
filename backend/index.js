@@ -18,6 +18,7 @@ connectDB();
 const app = express();
 const port = process.env.PORT;
 
+app.set("trust proxy", 1); //for production
 //middlewares
 app.use(session(sessionOptions));
 app.use(express.json());
@@ -28,25 +29,22 @@ app.use(cors(corsOptions));
 //translate routes
 app.use("/api/translate", translateRoutes);
 
-
 //auth routes
 app.use("/api/auth", authRoutes);
 
 //chat routes
 app.use("/api", chatRoutes);
 
-
-
 //No route match
-app.use((req,res)=>{
-    res.status(404).json({message:"Route not found"});
-})
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
 //error handler
-app.use((err,req,res,next)=>{
-    console.log(err);
-    res.status(err.status || 500).json({message:err.message});
-})
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(err.status || 500).json({ message: err.message });
+});
 //listen fxn
 app.listen(port, (req, res) => {
   console.log(`Server running at port ${port}`);
